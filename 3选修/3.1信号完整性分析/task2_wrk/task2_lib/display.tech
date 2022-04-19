@@ -1,0 +1,53 @@
+<!DOCTYPE Display>
+<Display>
+    <Current_Lpp name="cond:drawing"/>
+    <Lpp_Display_Order order="0">
+        <LPP name="silkscreenTop:drawing"/>
+        <LPP name="cond:drawing"/>
+        <LPP name="M2:drawing"/>
+        <LPP name="M3:drawing"/>
+        <LPP name="cond2:drawing"/>
+        <LPP name="silkscreenBottom:drawing"/>
+        <LPP name="cond_cond2:drawing"/>
+        <LPP name="M2_M3:drawing"/>
+        <LPP name="boardBound:drawing"/>
+        <LPP name="silk_screen:drawing"/>
+        <LPP name="silk_screen2:drawing"/>
+        <LPP name="scratch:drawing"/>
+        <LPP name="ads_device:ads_label"/>
+        <LPP name="ads_instance:drawing"/>
+        <LPP name="ads_instance:ads_label"/>
+        <LPP name="ads_annotate:drawing"/>
+        <LPP name="ads_annotate:ads_drawing1"/>
+        <LPP name="ads_annotate:ads_drawing2"/>
+        <LPP name="ads_annotate:ads_drawing3"/>
+        <LPP name="ads_annotate:ads_drawing4"/>
+        <LPP name="ads_annotate:ads_drawing5"/>
+        <LPP name="ads_annotate:ads_drawing6"/>
+        <LPP name="ads_annotate:ads_drawing7"/>
+        <LPP name="ads_annotate:ads_drawing8"/>
+        <LPP name="ads_annotate:ads_drawing9"/>
+        <LPP name="ads_device:ads_annotate"/>
+        <LPP name="ads_device:drawing"/>
+        <LPP name="ads_device:ads_drawing1"/>
+        <LPP name="ads_device:ads_drawing3"/>
+        <LPP name="ads_device:ads_drawing4"/>
+        <LPP name="ads_device:ads_drawing5"/>
+        <LPP name="ads_device:ads_drawing6"/>
+        <LPP name="ads_device:ads_drawing7"/>
+        <LPP name="ads_pin:ads_label"/>
+        <LPP name="ads_text:drawing"/>
+        <LPP name="ads_wire:drawing"/>
+        <LPP name="ads_y7:drawing"/>
+        <LPP name="ads_y8:drawing"/>
+        <LPP name="ads_wire:ads_label"/>
+        <LPP name="ads_y9:ads_drawing1"/>
+        <LPP name="ads_y9:ads_drawing2"/>
+        <LPP name="ads_y9:ads_drawing3"/>
+        <LPP name="ads_y9:ads_drawing4"/>
+        <LPP name="ads_y9:ads_drawing5"/>
+        <LPP name="ads_y9:ads_drawing6"/>
+        <LPP name="ads_y9:ads_drawing7"/>
+        <LPP name="ads_drc_error:drawing"/>
+    </Lpp_Display_Order>
+</Display>

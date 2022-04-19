@@ -1,0 +1,25 @@
+pathWidth 25.000000
+pathRadius 2.000000
+textHeight 10.000000
+instNameLayerID silk_screen2:drawing
+instIDLayerID silk_screen:drawing
+instParam1LayerID 
+instTextHeight 10.000000
+gridSnapX 5.000000
+gridSnapY 5.000000
+tapLength 25.000000
+portSize 4.000000
+minVertexDistance 0.000000
+unitsFreq 0
+unitsRes 1
+unitsCond 4
+unitsInd 5
+unitsCap 5
+unitsLng 1
+unitsTime 5
+unitsAng 0
+unitsPower 4
+unitsVolt 5
+unitsCur 5
+unitsDist 0
+pinAnnotLayerID 

@@ -1,0 +1,71 @@
+
+hpeesofsim (*) 512.update2.0 Feb 27 2020, MINT version 5
+    (64-bit windows built: Thu Feb 27, 2020 19:34:00 +0000)
+
+Warning detected by hpeesofsim in topology check during circuit set up.
+    Number of nodes with only one device attached (topology corrected): 1
+
+ RT:0.1 
+	 Running Tran:Tran1
+
+
+TRAN BatchSim1[1].Tran1[1/10] <task1_lib:RisingEdge:schematic> RT=0.1   time=(0 s->5 ns)
+
+ RT:0.2 
+	 Running Tran:Tran1
+
+
+TRAN BatchSim1[1].Tran1[2/10] <task1_lib:RisingEdge:schematic> RT=0.2   time=(0 s->5 ns)
+
+ RT:0.3 
+	 Running Tran:Tran1
+
+
+TRAN BatchSim1[1].Tran1[3/10] <task1_lib:RisingEdge:schematic> RT=0.3   time=(0 s->5 ns)
+
+ RT:0.4 
+	 Running Tran:Tran1
+
+
+TRAN BatchSim1[1].Tran1[4/10] <task1_lib:RisingEdge:schematic> RT=0.4   time=(0 s->5 ns)
+
+ RT:0.5 
+	 Running Tran:Tran1
+
+
+TRAN BatchSim1[1].Tran1[5/10] <task1_lib:RisingEdge:schematic> RT=0.5   time=(0 s->5 ns)
+
+ RT:0.6 
+	 Running Tran:Tran1
+
+
+TRAN BatchSim1[1].Tran1[6/10] <task1_lib:RisingEdge:schematic> RT=0.6   time=(0 s->5 ns)
+
+ RT:0.7 
+	 Running Tran:Tran1
+
+
+TRAN BatchSim1[1].Tran1[7/10] <task1_lib:RisingEdge:schematic> RT=0.7   time=(0 s->5 ns)
+
+ RT:0.8 
+	 Running Tran:Tran1
+
+
+TRAN BatchSim1[1].Tran1[8/10] <task1_lib:RisingEdge:schematic> RT=0.8   time=(0 s->5 ns)
+
+ RT:0.9 
+	 Running Tran:Tran1
+
+
+TRAN BatchSim1[1].Tran1[9/10] <task1_lib:RisingEdge:schematic> RT=0.9   time=(0 s->5 ns)
+
+ RT:1.0 
+	 Running Tran:Tran1
+
+
+TRAN BatchSim1[1].Tran1[10/10] <task1_lib:RisingEdge:schematic> RT=1.0   time=(0 s->5 ns)
+
+
+Resource usage:
+  Total stopwatch time     =     1.35 seconds.
+

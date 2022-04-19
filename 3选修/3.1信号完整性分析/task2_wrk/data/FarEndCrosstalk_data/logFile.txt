@@ -1,0 +1,24 @@
+
+hpeesofsim (*) 512.update2.0 Feb 27 2020, MINT version 5
+    (64-bit windows built: Thu Feb 27, 2020 19:34:00 +0000)
+
+Warning detected by hpeesofsim during TRAN analysis 'Tran2'.
+    UserValue(0.000132) < MinRecommendValue(0.000174) OR UserValue > MaxRecommendValue(49.784000) for 'W' in `CLin2'
+
+
+COMPONENT : CLin1
+    Characterizing to 3.333 GHz 
+
+COMPONENT : CLin2
+    Characterizing to 3.333 GHz 
+Pt DC convergence is used.
+
+.
+
+
+TRAN Tran2[1] <task2_lib:FarEndCrosstalk:schematic>   time=(0 s->3 ns)
+
+
+Resource usage:
+  Total stopwatch time     =     1.12 seconds.
+

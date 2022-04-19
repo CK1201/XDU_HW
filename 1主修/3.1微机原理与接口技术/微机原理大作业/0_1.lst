@@ -1,0 +1,182 @@
+Microsoft (R) Macro Assembler Version 6.11		    12/05/20 22:28:18
+tempfile.asm						     Page 1 - 1
+
+
+ 0000				DATAS SEGMENT
+ 0000 50 6C 65 61 73 65			TIPInputString DB 'Please input string:','$'
+       20 69 6E 70 75 74
+       20 73 74 72 69 6E
+       67 3A 24
+ 0015 4F 72 69 67 69 6E			TIPOriginalString DB 'Original string:','$'
+       61 6C 20 73 74 72
+       69 6E 67 3A 24
+ 0026 4E 65 77 20 73 74			TIPNewString DB 'New string:','$'
+       72 69 6E 67 3A 24
+ 0032 64				BUFFSTRING  DB 100
+ 0033  00							DB ?
+ 0034  0064 [							DB 100 DUP(?)
+        00
+       ]
+				    ;此处输入数据段代码  
+ 0098				DATAS ENDS
+
+ 0000				STACKS SEGMENT
+ 0000  0064 [					DB 100 DUP(?)
+        00
+       ]
+ 0064					TOP LABEL WORD
+				    ;此处输入堆栈段代码
+ 0064				STACKS ENDS
+
+ 0000				CODES SEGMENT
+				    ASSUME CS:CODES,DS:DATAS,SS:STACKS
+ 0000				START:
+ 0000  B8 ---- R		    MOV AX,DATAS
+ 0003  8E D8			    MOV DS,AX
+				    
+ 0005  0E E8 0004			CALL CapitalizeString
+				    
+				    ;此处输入代码段代码
+ 0009  B4 4C			    MOV AH,4CH
+ 000B  CD 21			    INT 21H
+				    
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;函数定义区;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				;把字符变为大写
+				;入口参数：无
+				;出口参数：无
+ 000D				CapitalizeString PROC FAR
+ 000D  50				PUSH AX
+ 000E  53			 	PUSH BX
+ 000F  51			 	PUSH CX
+ 0010  52			 	PUSH DX
+ 0011  54			 	PUSH SP
+ 0012  55			 	PUSH BP
+ 0013  56			 	PUSH SI
+ 0014  57			 	PUSH DI
+				 	
+				    ;输入字符串
+ 0015  0E E8 004D			CALL InputString
+				    ;把输入字符串个数转化为字类型给CX来循环处理
+ 0019  8D 1E 0034 R		    LEA BX,BUFFSTRING+2
+ 001D  A0 0033 R		    MOV AL,BUFFSTRING+1
+ 0020  98			    CBW
+ 0021  8B C8			    MOV CX,AX
+ 0023  03 D8			    ADD BX,AX
+ 0025  C6 07 24			    MOV BYTE PTR [BX],'$'
+				    ;显示原字符串
+ 0028  8D 16 0015 R		    LEA DX,TIPOriginalString
+ 002C  B4 09			    MOV AH,9
+ 002E  CD 21			    INT 21H
+ 0030  8D 16 0034 R		    LEA DX,BUFFSTRING+2
+ 0034  B4 09			    MOV AH,9
+ 0036  CD 21			    INT 21H
+				    
+ 0038  B2 0A			    MOV DL,10
+ 003A  B4 02			    MOV AH,02H
+ 003C  CD 21			    INT 21H
+				    ;转换为大写
+ 003E  8D 1E 0034 R		    LEA BX,BUFFSTRING+2
+ 0042					Capitalize:
+ 0042  80 3F 41					CMP BYTE PTR [BX],65;判断是字母还是数字
+ 0045  72 03					JB NoCapitalize
+ 0047  80 27 5F					AND BYTE PTR [BX],5FH
+ 004A				    	NoCapitalize:
+ 004A  43			    		INC BX
+ 004B  E2 F5				LOOP Capitalize
+					;;显示新字符串
+ 004D  8D 16 0026 R			LEA DX,TIPNewString
+ 0051  B4 09			    MOV AH,9
+ 0053  CD 21			    INT 21H
+ 0055  8D 16 0034 R		    LEA DX,BUFFSTRING+2
+ 0059  B4 09			    MOV AH,9
+ 005B  CD 21			    INT 21H
+				    
+				    
+ 005D  5F			    POP DI
+ 005E  5E			    POP SI
+ 005F  5D			    POP BP
+ 0060  5C			    POP SP
+ 0061  5A			    POP DX
+ 0062  59			 	POP CX
+ 0063  5B			 	POP BX
+ 0064  58			 	POP AX
+ 0065  CB			 	RET
+ 0066				CapitalizeString ENDP
+				;输入字符串
+ 0066				InputString PROC FAR
+ 0066				    INPUTStr:
+ 0066  8D 16 0000 R				LEA DX,TIPInputString
+ 006A  B4 09			    	MOV AH,9
+ 006C  CD 21			    	INT 21H
+ 006E  8D 16 0032 R		    	LEA DX,BUFFSTRING
+ 0072  B4 0A			    	MOV AH,0AH
+ 0074  CD 21			    	INT 21H
+ 0076  80 3E 0033 R 00		    	CMP [BUFFSTRING+1],0
+ 007B  74 E9			    	JZ INPUTStr
+ 007D  B2 0A			    MOV DL,10
+ 007F  B4 02			    MOV AH,02H
+ 0081  CD 21			    INT 21H
+ 0083  CB			    RET
+ 0084				InputString ENDP
+				   	
+ 0084				CODES ENDS
+				    END START
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Microsoft (R) Macro Assembler Version 6.11		    12/05/20 22:28:18
+tempfile.asm						     Symbols 2 - 1
+
+
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+CODES  . . . . . . . . . . . . .	16 Bit	 0084	  Para	  Private 
+DATAS  . . . . . . . . . . . . .	16 Bit	 0098	  Para	  Private 
+STACKS . . . . . . . . . . . . .	16 Bit	 0064	  Para	  Private 
+
+
+Procedures,  parameters and locals:
+
+                N a m e                 Type     Value    Attr
+
+CapitalizeString . . . . . . . .	P Far	 000D	  CODES	Length= 0059 Public
+  Capitalize . . . . . . . . . .	L Near	 0042	  CODES	
+  NoCapitalize . . . . . . . . .	L Near	 004A	  CODES	
+InputString  . . . . . . . . . .	P Far	 0066	  CODES	Length= 001E Public
+  INPUTStr . . . . . . . . . . .	L Near	 0066	  CODES	
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+BUFFSTRING . . . . . . . . . . .	Byte	 0032	  DATAS	
+START  . . . . . . . . . . . . .	L Near	 0000	  CODES	
+TIPInputString . . . . . . . . .	Byte	 0000	  DATAS	
+TIPNewString . . . . . . . . . .	Byte	 0026	  DATAS	
+TIPOriginalString  . . . . . . .	Byte	 0015	  DATAS	
+TOP  . . . . . . . . . . . . . .	Word	 0064	  STACKS	
+
+	   0 Warnings
+	   0 Errors

@@ -1,0 +1,899 @@
+Microsoft (R) Macro Assembler Version 6.11		    12/06/20 15:29:32
+tempfile.asm						     Page 1 - 1
+
+
+ 0000				DATAS SEGMENT
+ 0000 50 75 73 68 20 31			TIPMenu1 DB 'Push 1 To Capitalize String','$'
+       20 54 6F 20 43 61
+       70 69 74 61 6C 69
+       7A 65 20 53 74 72
+       69 6E 67 24
+ 001C 50 75 73 68 20 32			TIPMenu2 DB 'Push 2 To Find The Maximum of The String','$'
+       20 54 6F 20 46 69
+       6E 64 20 54 68 65
+       20 4D 61 78 69 6D
+       75 6D 20 6F 66 20
+       54 68 65 20 53 74
+       72 69 6E 67 24
+ 0045 50 75 73 68 20 33			TIPMenu3 DB 'Push 3 To Sort The Array','$'
+       20 54 6F 20 53 6F
+       72 74 20 54 68 65
+       20 41 72 72 61 79
+       24
+ 005E 50 75 73 68 20 34			TIPMenu4 DB 'Push 4 To Show Time in Real Time','$'
+       20 54 6F 20 53 68
+       6F 77 20 54 69 6D
+       65 20 69 6E 20 52
+       65 61 6C 20 54 69
+       6D 65 24
+ 007F 50 75 73 68 20 35			TIPMenu5 DB 'Push 5 To Exit','$'
+       20 54 6F 20 45 78
+       69 74 24
+					
+ 008E 50 6C 65 61 73 65			TIPInputString DB 'Please input string:','$'
+       20 69 6E 70 75 74
+       20 73 74 72 69 6E
+       67 3A 24
+ 00A3 4F 72 69 67 69 6E			TIPOriginalString DB 'Original string:','$'
+       61 6C 20 73 74 72
+       69 6E 67 3A 24
+ 00B4 4E 65 77 20 73 74			TIPNewString DB 'New string:','$'
+       72 69 6E 67 3A 24
+					
+ 00C0 54 68 65 20 6D 61			TIPMax DB 'The maximum is ','$'
+       78 69 6D 75 6D 20
+       69 73 20 24
+					
+ 00D0 50 6C 65 61 73 65			TIPInputArray DB 'Please input array:','$'
+       20 69 6E 70 75 74
+       20 61 72 72 61 79
+       3A 24
+ 00E4 4F 72 69 67 69 6E			TIPOriginalArray DB 'Original array:','$'
+       61 6C 20 61 72 72
+       61 79 3A 24
+ 00F4 4E 65 77 20 61 72			TIPNewArray DB 'New array:','$'
+       72 61 79 3A 24
+					
+ 00FF 50 6C 65 61 73 65			TIPInputTIME DB 'Please input TIME(HH:MM:SS:):','$'
+       20 69 6E 70 75 74
+       20 54 49 4D 45 28
+       48 48 3A 4D 4D 3A
+       53 53 3A 29 3A 24
+					
+					
+ 011D 64				BUFFSTRING  DB 100
+ 011E  00							DB ?
+ 011F  0064 [							DB 100 DUP(?)
+        00
+       ]
+ 0183  0064 [				ARRAY DB 100 DUP(0)
+        00
+       ]
+ 01E7 00				ARRAYLength DB 0
+ 01E8  0064 [				ARRAYSorted DB 100 DUP(0)
+        00
+       ]
+ 024C 00				SpiltSymbol DB ?
+ 024D  0003 [				TIMEBUFF DB 3 DUP(0)
+        00
+       ]
+					
+ 0250 00				TEMP DB 0
+ 0251 0A				Decimal DB 10
+ 0252 10				HEX DB 16
+				    ;此处输入数据段代码  
+ 0253				DATAS ENDS
+
+ 0000				STACKS SEGMENT
+ 0000  0064 [					DB 100 DUP(?)
+        00
+       ]
+ 0064					TOP LABEL WORD
+				    ;此处输入堆栈段代码
+ 0064				STACKS ENDS
+
+ 0000				CODES SEGMENT
+				    ASSUME CS:CODES,DS:DATAS,SS:STACKS
+ 0000				START:
+ 0000  B8 ---- R		    MOV AX,DATAS
+ 0003  8E D8			    MOV DS,AX
+				    
+ 0005				ReturnMenu:
+ 0005  0E E8 0068			CALL Menu
+
+ 0009				Redo:
+ 0009  B4 02				MOV AH,2
+ 000B  B7 00				MOV BH,0
+ 000D  B2 00				MOV DL,0
+ 000F  B6 00				MOV DH,0
+ 0011  CD 10				INT 10H
+					
+ 0013  B4 01				MOV AH,1
+ 0015  CD 21				INT 21H
+					
+					
+ 0017  3C 31				CMP AL,'1'
+ 0019  74 12				JZ MISSION1
+ 001B  3C 32				CMP AL,'2'
+ 001D  74 1C				JZ MISSION2
+ 001F  3C 33				CMP AL,'3'
+ 0021  74 26				JZ MISSION3
+ 0023  3C 34				CMP AL,'4'
+ 0025  74 30				JZ MISSION4
+ 0027  3C 35				CMP AL,'5'
+ 0029  74 3A				JZ MISSION5
+ 002B  EB DC				JMP Redo
+					
+ 002D				MISSION1:
+ 002D  0E E8 0345			CALL CapitalizeString
+					;检测键盘输入是否为Esc，若是则返回主菜单，否则重做
+ 0031  B4 08				MOV AH,8
+ 0033  CD 21				INT 21H
+ 0035  3C 1B				CMP AL,1BH
+ 0037  74 CC				JZ ReturnMenu
+ 0039  EB F2				JMP MISSION1
+
+ 003B				MISSION2:
+ 003B  0E E8 02C4			CALL FindMaxStr
+					;检测键盘输入是否为Esc，若是则返回主菜单，否则重做
+ 003F  B4 08				MOV AH,8
+ 0041  CD 21				INT 21H
+ 0043  3C 1B				CMP AL,1BH
+ 0045  74 BE				JZ ReturnMenu
+ 0047  EB F2				JMP MISSION2
+
+ 0049				MISSION3:
+ 0049  0E E8 015F			CALL SortTheArray
+					;检测键盘输入是否为Esc，若是则返回主菜单，否则重做
+ 004D  B4 08				MOV AH,8
+ 004F  CD 21				INT 21H
+ 0051  3C 1B				CMP AL,1BH
+ 0053  74 B0				JZ ReturnMenu
+ 0055  EB F2				JMP MISSION3	
+
+ 0057				MISSION4:
+ 0057  0E E8 0079			CALL ShowTime
+					;检测键盘输入是否为Esc，若是则返回主菜单，否则重做
+ 005B  B4 08				MOV AH,8
+ 005D  CD 21				INT 21H
+ 005F  3C 1B				CMP AL,1BH
+ 0061  74 A2				JZ ReturnMenu
+ 0063  EB F2				JMP MISSION4
+
+ 0065				MISSION5:
+				    ;此处输入代码段代码
+				    ;清屏
+ 0065  B4 00			    MOV AH,0
+ 0067  B0 03				MOV AL,3
+ 0069  B3 00				MOV BL,0
+ 006B  CD 10				INT 10H
+ 006D  B4 4C			    MOV AH,4CH
+ 006F  CD 21			    INT 21H
+				    
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;函数定义区;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 0071				Menu PROC FAR
+					;清屏
+ 0071  B4 00				MOV AH,0
+ 0073  B0 03				MOV AL,3
+ 0075  B3 00				MOV BL,0
+ 0077  CD 10				INT 10H
+					;第一条提示
+ 0079  B4 02				MOV AH,2
+ 007B  B7 00				MOV BH,0
+ 007D  B2 00				MOV DL,0
+ 007F  B6 01				MOV DH,1
+ 0081  CD 10				INT 10H
+ 0083  B4 09				MOV AH,9
+ 0085  8D 16 0000 R			LEA DX,TIPMenu1
+ 0089  CD 21				INT 21H
+					;第二条提示
+ 008B  B4 02				MOV AH,2
+ 008D  B7 00				MOV BH,0
+ 008F  B2 00				MOV DL,0
+ 0091  B6 02				MOV DH,2
+ 0093  CD 10				INT 10H
+ 0095  B4 09				MOV AH,9
+ 0097  8D 16 001C R			LEA DX,TIPMenu2
+ 009B  CD 21				INT 21H
+					;第三条提示
+ 009D  B4 02				MOV AH,2
+ 009F  B7 00				MOV BH,0
+ 00A1  B2 00				MOV DL,0
+ 00A3  B6 03				MOV DH,3
+ 00A5  CD 10				INT 10H
+ 00A7  B4 09				MOV AH,9
+ 00A9  8D 16 0045 R			LEA DX,TIPMenu3
+ 00AD  CD 21				INT 21H
+					;第四条提示
+ 00AF  B4 02				MOV AH,2
+ 00B1  B7 00				MOV BH,0
+ 00B3  B2 00				MOV DL,0
+ 00B5  B6 04				MOV DH,4
+ 00B7  CD 10				INT 10H
+ 00B9  B4 09				MOV AH,9
+ 00BB  8D 16 005E R			LEA DX,TIPMenu4
+ 00BF  CD 21				INT 21H
+					;第五条提示
+ 00C1  B4 02				MOV AH,2
+ 00C3  B7 00				MOV BH,0
+ 00C5  B2 00				MOV DL,0
+ 00C7  B6 05				MOV DH,5
+ 00C9  CD 10				INT 10H
+ 00CB  B4 09				MOV AH,9
+ 00CD  8D 16 007F R			LEA DX,TIPMenu5
+ 00D1  CD 21				INT 21H
+					
+ 00D3  CB				RET
+ 00D4				Menu ENDP
+				;把十进制数输出
+				;入口参数：无
+				;出口参数：无
+ 00D4				ShowTime PROC FAR
+ 00D4  50				PUSH AX
+ 00D5  53			 	PUSH BX
+ 00D6  51			 	PUSH CX
+ 00D7  52			 	PUSH DX
+ 00D8  54			 	PUSH SP
+ 00D9  55			 	PUSH BP
+ 00DA  56			 	PUSH SI
+ 00DB  57			 	PUSH DI
+				 	
+				 	;清屏
+ 00DC  B4 00			    MOV AH,0
+ 00DE  B0 03				MOV AL,3
+ 00E0  B3 00				MOV BL,0
+ 00E2  CD 10				INT 10H
+				 	
+ 00E4  B4 02			 	MOV AH,2
+ 00E6  B7 01				MOV BH,1
+ 00E8  B2 00				MOV DL,0
+ 00EA  B6 00				MOV DH,0
+ 00EC  CD 10				INT 10H
+					
+ 00EE  C6 06 024C R 3A			MOV [SpiltSymbol],':'
+ 00F3  0E E8 004F			CALL CorrectTIME
+ 00F7  0E E8 0072		    CALL DispRealTIME
+				    
+ 00FB  5F				POP DI
+ 00FC  5E			    POP SI
+ 00FD  5D			    POP BP
+ 00FE  5C			    POP SP
+ 00FF  5A			    POP DX
+ 0100  59			 	POP CX
+ 0101  5B			 	POP BX
+ 0102  58			 	POP AX
+ 0103  CB			    RET
+ 0104				ShowTime ENDP
+				;把十进制数输出
+				;入口参数：十进制数地址SI
+				;出口参数：无
+ 0104				DispDec PROC FAR
+ 0104  50				PUSH AX
+ 0105  53			 	PUSH BX
+ 0106  51			 	PUSH CX
+ 0107  52			 	PUSH DX
+				 		
+ 0108  8A 04			 	MOV AL,[SI]
+ 010A  98				CBW
+ 010B  F6 36 0251 R			DIV Decimal
+ 010F  80 C4 30				ADD AH,'0'
+ 0112  8A FC				MOV BH,AH
+ 0114  04 30				ADD AL,'0'
+						
+ 0116  8A D0				MOV DL,AL
+ 0118  B4 02			    MOV AH,02H
+ 011A  CD 21			    INT 21H
+				    	
+ 011C  8A D7			    MOV DL,BH
+ 011E  CD 21			    INT 21H
+							
+ 0120  5A				POP DX
+ 0121  59			 	POP CX
+ 0122  5B			 	POP BX
+ 0123  58			 	POP AX
+ 0124  CB				RET
+ 0125				DispDec ENDP
+				;输出时间
+				;入口参数：时间缓冲区ARRAY
+				;出口参数：无
+ 0125				DispTIME PROC FAR
+ 0125  56				PUSH SI
+ 0126  8D 36 0183 R			LEA SI,ARRAY
+ 012A  0E E8 FFD6		    CALL DispDec
+				    
+ 012E  B2 3A			    MOV DL,':'
+ 0130  B4 02			    MOV AH,02H
+ 0132  CD 21			    INT 21H
+				    
+ 0134  46			    INC SI
+ 0135  0E E8 FFCB		    CALL DispDec
+				    
+ 0139  B2 3A			    MOV DL,':'
+ 013B  B4 02			    MOV AH,02H
+ 013D  CD 21			    INT 21H
+				    
+ 013F  46			    INC SI
+ 0140  0E E8 FFC0		    CALL DispDec
+ 0144  5E			    POP SI
+ 0145  CB			    RET
+ 0146				DISPTIME ENDP
+				;时间矫正时间
+				;入口参数：无
+				;出口参数：无
+ 0146				    CorrectTIME PROC FAR
+ 0146  8D 16 00FF R		    	LEA DX,TIPInputTIME
+ 014A  B4 09			    	MOV AH,9
+ 014C  CD 21			    	INT 21H
+ 014E  8D 36 00FF R		    	LEA SI,TIPInputTIME
+ 0152  0E E8 0297		    	CALL InputString
+ 0156  0E E8 00BF		    	CALL Str2Num
+				    	
+ 015A  8D 36 0183 R		    	LEA SI,ARRAY
+ 015E  8A 2C			    	MOV CH,[SI]
+ 0160  46			    	INC SI
+ 0161  8A 0C			    	MOV CL,[SI]
+ 0163  46			    	INC SI
+ 0164  8A 34			    	MOV DH,[SI]
+ 0166  B2 00			    	MOV DL,0
+ 0168  B4 2D			    	MOV AH,2DH
+ 016A  CD 21			    	INT 21H
+ 016C  CB			    	RET
+ 016D					CorrectTIME ENDP
+				;实时输出时间
+				;入口参数：时间缓冲区ARRAY
+				;出口参数：无
+ 016D				DispRealTIME PROC FAR
+ 016D  56				PUSH SI
+					;清屏
+ 016E  B4 00				MOV AH,0
+ 0170  B0 03				MOV AL,3
+ 0172  B3 00				MOV BL,0
+ 0174  CD 10				INT 10H
+ 0176					DISPREALTIME1:
+ 0176  B4 02					MOV AH,2
+ 0178  B7 00					MOV BH,0
+ 017A  B2 48					MOV DL,72
+ 017C  B6 00					MOV DH,0
+ 017E  CD 10					INT 10H
+							
+ 0180  B4 2C					MOV AH,2CH
+ 0182  CD 21			    	INT 21H
+ 0184  88 2E 0183 R		    	MOV [ARRAY],CH
+ 0188  88 0E 0184 R		    	MOV [ARRAY+1],CL
+ 018C  88 36 0185 R		    	MOV [ARRAY+2],DH
+				    
+ 0190  0E E8 FF91		    	CALL DispTIME
+				    		
+ 0194  B4 02			    	MOV AH,2
+ 0196  BA 090A			    	MOV DX,090AH
+ 0199  B7 00			    	MOV BH,0
+ 019B  CD 10			    	INT 10H
+				    		
+ 019D  B9 FFFF			    	MOV CX,0FFFFH
+ 01A0  E2 FE			    DELAY:LOOP DELAY
+ 01A2  B4 01			    	MOV AH,01H
+ 01A4  CD 16			    	INT 16H
+ 01A6  75 02			    	JNZ StopShow
+ 01A8  EB CC			    	JMP DISPREALTIME1
+ 01AA				    StopShow:
+				    	
+ 01AA  5E			    POP SI
+ 01AB  CB			    RET
+ 01AC				DispRealTIME ENDP
+				;把数组按升序排列，十六进制输出
+				;入口参数：无
+				;出口参数：无
+ 01AC				SortTheArray PROC FAR
+ 01AC  50				PUSH AX
+ 01AD  53			 	PUSH BX
+ 01AE  51			 	PUSH CX
+ 01AF  52			 	PUSH DX
+ 01B0  54			 	PUSH SP
+ 01B1  55			 	PUSH BP
+ 01B2  56			 	PUSH SI
+ 01B3  57			 	PUSH DI
+				 	
+				 	;清屏
+ 01B4  B4 00			    MOV AH,0
+ 01B6  B0 03				MOV AL,3
+ 01B8  B3 00				MOV BL,0
+ 01BA  CD 10				INT 10H
+				 	
+ 01BC  B4 02			 	MOV AH,2
+ 01BE  B7 01				MOV BH,1
+ 01C0  B2 00				MOV DL,0
+ 01C2  B6 00				MOV DH,0
+ 01C4  CD 10				INT 10H
+					
+ 01C6  C6 06 024C R 2C			MOV [SpiltSymbol],',';输入以逗号分隔
+					;输入字符串
+ 01CB  8D 36 00D0 R			LEA SI,TIPInputArray
+ 01CF  0E E8 021A			CALL InputString
+					;清屏
+ 01D3  B4 00				MOV AH,0
+ 01D5  B0 03				MOV AL,3
+ 01D7  B3 00				MOV BL,0
+ 01D9  CD 10				INT 10H
+				    ;把字符串转为数字放入数组
+ 01DB  0E E8 003A		    CALL Str2Num
+				    ;输出原数组
+ 01DF  8D 16 00E4 R		    LEA DX,TIPOriginalArray
+ 01E3  B4 09			    MOV AH,9
+ 01E5  CD 21			    INT 21H
+				    
+ 01E7  A0 01E7 R		    MOV AL,[ARRAYLength]
+ 01EA  B4 00			    MOV AH,0
+ 01EC  8B C8			    MOV CX,AX
+ 01EE  8D 36 0183 R		    LEA SI,ARRAY
+ 01F2  0E E8 00E8			CALL DISPARRRY
+					
+ 01F6  B2 0A				MOV DL,10
+ 01F8  B4 02			    MOV AH,02H
+ 01FA  CD 21			    INT 21H
+				    ;递增排序
+ 01FC  0E E8 0070		    CALL SortARRAY
+				    
+				    
+					;输出新数组
+ 0200  8D 16 00B4 R			LEA DX,TIPNewString
+ 0204  B4 09			    MOV AH,9
+ 0206  CD 21			    INT 21H
+				    
+ 0208  8D 36 01E8 R		    LEA SI,ARRAYSorted
+ 020C  0E E8 00CE			CALL DISPARRRY
+					
+ 0210  5F			    POP DI
+ 0211  5E			    POP SI
+ 0212  5D			    POP BP
+ 0213  5C			    POP SP
+ 0214  5A			    POP DX
+ 0215  59			 	POP CX
+ 0216  5B			 	POP BX
+ 0217  58			 	POP AX
+ 0218  CB			    RET
+ 0219				SortTheArray ENDP
+				;把字符串转为数字放入数组,以逗号分隔和结尾
+				;入口参数：无
+				;出口参数：无
+ 0219				Str2Num PROC FAR
+ 0219  A0 011E R			MOV AL,BUFFSTRING+1
+ 021C  98			    CBW
+ 021D  8B C8			    MOV CX,AX
+				    
+ 021F  8D 36 011F R			LEA SI,BUFFSTRING+2
+ 0223  8D 3E 0183 R			LEA DI,ARRAY
+ 0227  B6 00				MOV DH,0			;用于存放数组个数
+ 0229  B2 00				MOV DL,0			;用于存放该数字位数
+ 022B  B0 00				MOV AL,0			;用于存放该数字十进制
+ 022D					Spilt:
+ 022D  8A 1E 024C R				MOV BL,[SpiltSymbol]
+ 0231  38 1C					CMP BYTE PTR [SI],BL
+ 0233  74 05					JZ AddNum
+ 0235  46					INC SI
+ 0236  FE C2					INC DL
+ 0238  EB 2F					JMP NotSpilt
+ 023A						AddNum:
+ 023A  FE C6					INC DH
+ 023C  51					PUSH CX
+ 023D  56					PUSH SI
+								
+ 023E  8A C2					MOV AL,DL
+ 0240  98					CBW
+ 0241  8B C8			    	MOV CX,AX
+				    			
+ 0243				    	Return:
+ 0243  4E			    		DEC SI
+				    		;MOV DL,[SI]
+				    		;MOV AH,02H
+				    		;INT 21H
+ 0244  E2 FD			    		LOOP Return
+				    			
+ 0246  8B C8			    	MOV CX,AX
+ 0248  49			    	DEC CX
+				    			
+ 0249  B0 00			    	MOV AL,0
+ 024B  B4 00			    	MOV AH,0
+				    			
+ 024D  8A 04			    	MOV AL,[SI]
+ 024F  2C 30			    	SUB AL,'0'
+				    			
+				    			
+				    			
+ 0251						Str2Dec:
+ 0251  46						INC SI
+ 0252  F6 26 0251 R					MUL Decimal
+ 0256  8A 1C						MOV BL,[SI]
+ 0258  80 EB 30						SUB BL,'0'
+ 025B  02 C3						ADD AL,BL
+ 025D  E2 F2						LOOP Str2Dec
+									
+ 025F  88 05					MOV [DI],AL
+ 0261  47					INC DI
+ 0262  B2 00					MOV DL,0
+ 0264  B0 00					MOV AL,0
+ 0266  5E					POP SI
+ 0267  46					INC SI;指向逗号下一个
+ 0268  59					POP CX
+ 0269						NotSpilt:
+ 0269  E2 C2					LOOP Spilt
+ 026B  88 36 01E7 R			MOV [ARRAYLength],DH
+ 026F  CB				RET
+ 0270				Str2Num ENDP
+				;递增排序
+				;入口参数：无
+				;出口参数：无
+ 0270				SortARRAY PROC FAR
+ 0270  8D 1E 0183 R			LEA BX,ARRAY
+ 0274  8D 2E 01E8 R			LEA BP,ARRAYSorted
+ 0278  BE 0000				MOV SI,0
+ 027B  BF 0000				MOV DI,0
+						
+ 027E  A0 01E7 R			MOV AL,[ARRAYLength];外循环
+ 0281					SORT:
+ 0281  8A 26 01E7 R				MOV AH,[ARRAYLength]
+ 0285  B6 7F					MOV DH,127
+ 0287						FindMin:
+ 0287  3A 30						CMP DH,[BX][SI]
+ 0289  72 04						JB FindMinNEXT
+ 028B  8A 30						MOV DH,[BX][SI]
+ 028D  8B CE						MOV CX,SI
+ 028F							FindMinNEXT:
+ 028F  46						INC SI
+ 0290  FE CC						DEC AH
+ 0292  75 F3						JNZ FindMin
+ 0294  88 33					MOV [BP][DI],DH
+ 0296  47					INC DI
+ 0297  8B F1					MOV SI,CX
+ 0299  B6 7F					MOV DH,127
+ 029B  88 30					MOV [BX][SI],DH
+ 029D  BE 0000					MOV SI,0
+ 02A0  FE C8					DEC AL
+ 02A2  75 DD					JNZ SORT
+
+						;MOV DL,[BX]
+						
+ 02A4  CB				RET
+ 02A5				SortARRAY ENDP
+				;把十六进制数输出
+				;入口参数：十六进制数地址SI
+				;出口参数：无
+ 02A5				Disp PROC FAR
+ 02A5  51				PUSH CX
+ 02A6  8A 04				MOV AL,[SI]
+ 02A8					NEXTNum:
+ 02A8  98					CBW
+ 02A9  F6 36 0252 R				DIV HEX
+ 02AD  80 FC 09					CMP AH,9
+ 02B0  77 05					JA LETTER
+ 02B2  80 C4 30					ADD AH,'0'
+ 02B5  EB 06					JMP NotLETTER
+ 02B7						LETTER:
+ 02B7  80 EC 0A						SUB AH,10
+ 02BA  80 C4 41						ADD AH,'A'
+							
+ 02BD						NotLETTER:
+ 02BD  50						PUSH AX
+ 02BE  FE 06 0250 R					INC [TEMP]
+							
+ 02C2  3C 00						CMP AL,0
+ 02C4  74 02						JZ NoMore
+							
+ 02C6  EB E0						JMP NEXTNum
+							
+ 02C8					NoMore:
+ 02C8  A0 0250 R				MOV AL,[TEMP]
+ 02CB  98					CBW
+ 02CC  8B C8					MOV CX,AX
+							
+ 02CE						OUTNum:
+ 02CE  5A						POP DX
+ 02CF  86 D6						XCHG DL,DH
+ 02D1  B4 02			    		MOV AH,02H
+ 02D3  CD 21			    		INT 21H
+ 02D5  E2 F7			    		LOOP OUTNum
+							
+							
+							
+ 02D7  C6 06 0250 R 00			MOV [TEMP],0
+ 02DC  59				POP CX
+ 02DD  CB				RET
+ 02DE				Disp ENDP
+				;输出数组
+				;入口参数：数组首地址SI，长度CX
+				;出口参数：无
+ 02DE				DISPARRRY PROC FAR
+ 02DE  50				PUSH AX
+ 02DF  53			 	PUSH BX
+ 02E0  51			 	PUSH CX
+ 02E1  52			 	PUSH DX
+				 		
+ 02E2  A0 01E7 R			MOV AL,[ARRAYLength]
+ 02E5  B4 00				MOV AH,0
+ 02E7  8B C8				MOV CX,AX
+ 02E9  49				DEC CX
+ 02EA  0E E8 FFB7			CALL Disp
+ 02EE  46				INC SI
+ 02EF					DispNextNum:
+ 02EF  8A 16 024C R				MOV DL,[SpiltSymbol]
+ 02F3  B4 02			    	MOV AH,02H
+ 02F5  CD 21			    	INT 21H
+ 02F7  0E E8 FFAA				CALL Disp
+ 02FB  46			    	INC SI
+ 02FC  E2 F1			    LOOP DispNextNum
+				    	
+ 02FE  5A			    POP DX
+ 02FF  59			 	POP CX
+ 0300  5B			 	POP BX
+ 0301  58			 	POP AX
+ 0302  CB				RET
+ 0303				DISPARRRY ENDP
+				;把字符变为大写
+				;入口参数：无
+				;出口参数：无
+ 0303				FindMaxStr PROC FAR
+ 0303  50				PUSH AX
+ 0304  53			 	PUSH BX
+ 0305  51			 	PUSH CX
+ 0306  52			 	PUSH DX
+ 0307  54			 	PUSH SP
+ 0308  55			 	PUSH BP
+ 0309  56			 	PUSH SI
+ 030A  57			 	PUSH DI
+				 	
+				 	;清屏
+ 030B  B4 00			    MOV AH,0
+ 030D  B0 03				MOV AL,3
+ 030F  B3 00				MOV BL,0
+ 0311  CD 10				INT 10H
+				 	
+ 0313  B4 02			 	MOV AH,2
+ 0315  B7 01				MOV BH,1
+ 0317  B2 00				MOV DL,0
+ 0319  B6 00				MOV DH,0
+ 031B  CD 10				INT 10H
+				    ;输入字符串
+ 031D  8D 36 008E R		    LEA SI,TIPInputString
+ 0321  0E E8 00C8		    CALL InputString
+				    ;清屏
+ 0325  B4 00				MOV AH,0
+ 0327  B0 03				MOV AL,3
+ 0329  B3 00				MOV BL,0
+ 032B  CD 10				INT 10H
+				    ;把输入字符串个数转化为字类型给CX来循环处理，并在结尾加上'$'
+ 032D  8D 1E 011F R		    LEA BX,BUFFSTRING+2
+ 0331  A0 011E R		    MOV AL,BUFFSTRING+1
+ 0334  98			    CBW
+ 0335  8B C8			    MOV CX,AX
+ 0337  03 D8			    ADD BX,AX
+ 0339  C6 07 24			    MOV BYTE PTR [BX],'$'
+				    ;显示原字符串
+ 033C  8D 16 00A3 R		    LEA DX,TIPOriginalString
+ 0340  B4 09			    MOV AH,9
+ 0342  CD 21			    INT 21H
+ 0344  8D 16 011F R		    LEA DX,BUFFSTRING+2
+ 0348  B4 09			    MOV AH,9
+ 034A  CD 21			    INT 21H
+ 034C  B2 0A			    MOV DL,10
+ 034E  B4 02			    MOV AH,02H
+ 0350  CD 21			    INT 21H
+				    ;输出最大值提示符
+ 0352  8D 16 00C0 R		    LEA DX,TIPMax
+ 0356  B4 09			    MOV AH,9
+ 0358  CD 21			    INT 21H
+				    ;找出最大值
+ 035A  8D 1E 011F R		    LEA BX,BUFFSTRING+2
+ 035E  B2 00			    MOV DL,0
+ 0360				    FindMax:
+ 0360  38 17			    	CMP [BX],DL
+ 0362  72 02			    	JB NotBigger
+ 0364  8A 17			    	MOV DL,[BX]
+ 0366				    	NotBigger:
+ 0366  43			    		INC BX
+ 0367  E2 F7			    LOOP FindMax
+				    ;输出最大
+ 0369  B4 02			    MOV AH,02H
+ 036B  CD 21			    INT 21H
+				    
+ 036D  5F			    POP DI
+ 036E  5E			    POP SI
+ 036F  5D			    POP BP
+ 0370  5C			    POP SP
+ 0371  5A			    POP DX
+ 0372  59			 	POP CX
+ 0373  5B			 	POP BX
+ 0374  58			 	POP AX
+ 0375  CB			    RET
+ 0376				FindMaxStr ENDP
+				;把字符变为大写
+				;入口参数：无
+				;出口参数：无
+ 0376				CapitalizeString PROC FAR
+ 0376  50				PUSH AX
+ 0377  53			 	PUSH BX
+ 0378  51			 	PUSH CX
+ 0379  52			 	PUSH DX
+ 037A  54			 	PUSH SP
+ 037B  55			 	PUSH BP
+ 037C  56			 	PUSH SI
+ 037D  57			 	PUSH DI
+				 	
+				 	;清屏
+ 037E  B4 00			    MOV AH,0
+ 0380  B0 03				MOV AL,3
+ 0382  B3 00				MOV BL,0
+ 0384  CD 10				INT 10H
+				 	
+ 0386  B4 02			 	MOV AH,2
+ 0388  B7 01				MOV BH,1
+ 038A  B2 00				MOV DL,0
+ 038C  B6 00				MOV DH,0
+ 038E  CD 10				INT 10H
+				    ;输入字符串
+ 0390  8D 36 008E R		    LEA SI,TIPInputString
+ 0394  0E E8 0055			CALL InputString
+					;清屏
+ 0398  B4 00				MOV AH,0
+ 039A  B0 03				MOV AL,3
+ 039C  B3 00				MOV BL,0
+ 039E  CD 10				INT 10H
+				    ;把输入字符串个数转化为字类型给CX来循环处理
+ 03A0  8D 1E 011F R		    LEA BX,BUFFSTRING+2
+ 03A4  A0 011E R		    MOV AL,BUFFSTRING+1
+ 03A7  98			    CBW
+ 03A8  8B C8			    MOV CX,AX
+ 03AA  03 D8			    ADD BX,AX
+ 03AC  C6 07 24			    MOV BYTE PTR [BX],'$'
+				    ;显示原字符串
+ 03AF  8D 16 00A3 R		    LEA DX,TIPOriginalString
+ 03B3  B4 09			    MOV AH,9
+ 03B5  CD 21			    INT 21H
+ 03B7  8D 16 011F R		    LEA DX,BUFFSTRING+2
+ 03BB  B4 09			    MOV AH,9
+ 03BD  CD 21			    INT 21H
+				    
+ 03BF  B2 0A			    MOV DL,10
+ 03C1  B4 02			    MOV AH,02H
+ 03C3  CD 21			    INT 21H
+				    ;转换为大写
+ 03C5  8D 1E 011F R		    LEA BX,BUFFSTRING+2
+ 03C9					Capitalize:
+ 03C9  80 3F 41					CMP BYTE PTR [BX],65;判断是字母还是数字
+ 03CC  72 03					JB NoCapitalize
+ 03CE  80 27 5F					AND BYTE PTR [BX],5FH
+ 03D1				    	NoCapitalize:
+ 03D1  43			    		INC BX
+ 03D2  E2 F5				LOOP Capitalize
+					;;显示新字符串
+ 03D4  8D 16 00B4 R			LEA DX,TIPNewString
+ 03D8  B4 09			    MOV AH,9
+ 03DA  CD 21			    INT 21H
+ 03DC  8D 16 011F R		    LEA DX,BUFFSTRING+2
+ 03E0  B4 09			    MOV AH,9
+ 03E2  CD 21			    INT 21H
+				    
+				    
+ 03E4  5F			    POP DI
+ 03E5  5E			    POP SI
+ 03E6  5D			    POP BP
+ 03E7  5C			    POP SP
+ 03E8  5A			    POP DX
+ 03E9  59			 	POP CX
+ 03EA  5B			 	POP BX
+ 03EB  58			 	POP AX
+ 03EC  CB			 	RET
+ 03ED				CapitalizeString ENDP
+				;输入字符串
+ 03ED				InputString PROC FAR
+ 03ED				    INPUTStr:
+ 03ED  8B D6					MOV DX,SI
+ 03EF  B4 09			    	MOV AH,9
+ 03F1  CD 21			    	INT 21H
+ 03F3  8D 16 011D R		    	LEA DX,BUFFSTRING
+ 03F7  B4 0A			    	MOV AH,0AH
+ 03F9  CD 21			    	INT 21H
+ 03FB  80 3E 011E R 00		    	CMP [BUFFSTRING+1],0
+ 0400  74 EB			    	JZ INPUTStr
+ 0402  B2 0A			    MOV DL,10
+ 0404  B4 02			    MOV AH,02H
+ 0406  CD 21			    INT 21H
+ 0408  CB			    RET
+ 0409				InputString ENDP
+
+ 0409				CODES ENDS
+				    END START
+
+Microsoft (R) Macro Assembler Version 6.11		    12/06/20 15:29:32
+tempfile.asm						     Symbols 2 - 1
+
+
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+CODES  . . . . . . . . . . . . .	16 Bit	 0409	  Para	  Private 
+DATAS  . . . . . . . . . . . . .	16 Bit	 0253	  Para	  Private 
+STACKS . . . . . . . . . . . . .	16 Bit	 0064	  Para	  Private 
+
+
+Procedures,  parameters and locals:
+
+                N a m e                 Type     Value    Attr
+
+CapitalizeString . . . . . . . .	P Far	 0376	  CODES	Length= 0077 Public
+  Capitalize . . . . . . . . . .	L Near	 03C9	  CODES	
+  NoCapitalize . . . . . . . . .	L Near	 03D1	  CODES	
+CorrectTIME  . . . . . . . . . .	P Far	 0146	  CODES	Length= 0027 Public
+DISPARRRY  . . . . . . . . . . .	P Far	 02DE	  CODES	Length= 0025 Public
+  DispNextNum  . . . . . . . . .	L Near	 02EF	  CODES	
+DispDec  . . . . . . . . . . . .	P Far	 0104	  CODES	Length= 0021 Public
+DispRealTIME . . . . . . . . . .	P Far	 016D	  CODES	Length= 003F Public
+  DISPREALTIME1  . . . . . . . .	L Near	 0176	  CODES	
+  DELAY  . . . . . . . . . . . .	L Near	 01A0	  CODES	
+  StopShow . . . . . . . . . . .	L Near	 01AA	  CODES	
+DispTIME . . . . . . . . . . . .	P Far	 0125	  CODES	Length= 0021 Public
+Disp . . . . . . . . . . . . . .	P Far	 02A5	  CODES	Length= 0039 Public
+  NEXTNum  . . . . . . . . . . .	L Near	 02A8	  CODES	
+  LETTER . . . . . . . . . . . .	L Near	 02B7	  CODES	
+  NotLETTER  . . . . . . . . . .	L Near	 02BD	  CODES	
+  NoMore . . . . . . . . . . . .	L Near	 02C8	  CODES	
+  OUTNum . . . . . . . . . . . .	L Near	 02CE	  CODES	
+FindMaxStr . . . . . . . . . . .	P Far	 0303	  CODES	Length= 0073 Public
+  FindMax  . . . . . . . . . . .	L Near	 0360	  CODES	
+  NotBigger  . . . . . . . . . .	L Near	 0366	  CODES	
+InputString  . . . . . . . . . .	P Far	 03ED	  CODES	Length= 001C Public
+  INPUTStr . . . . . . . . . . .	L Near	 03ED	  CODES	
+Menu . . . . . . . . . . . . . .	P Far	 0071	  CODES	Length= 0063 Public
+ShowTime . . . . . . . . . . . .	P Far	 00D4	  CODES	Length= 0030 Public
+SortARRAY  . . . . . . . . . . .	P Far	 0270	  CODES	Length= 0035 Public
+  SORT . . . . . . . . . . . . .	L Near	 0281	  CODES	
+  FindMin  . . . . . . . . . . .	L Near	 0287	  CODES	
+  FindMinNEXT  . . . . . . . . .	L Near	 028F	  CODES	
+SortTheArray . . . . . . . . . .	P Far	 01AC	  CODES	Length= 006D Public
+Str2Num  . . . . . . . . . . . .	P Far	 0219	  CODES	Length= 0057 Public
+  Spilt  . . . . . . . . . . . .	L Near	 022D	  CODES	
+  AddNum . . . . . . . . . . . .	L Near	 023A	  CODES	
+  Return . . . . . . . . . . . .	L Near	 0243	  CODES	
+  Str2Dec  . . . . . . . . . . .	L Near	 0251	  CODES	
+  NotSpilt . . . . . . . . . . .	L Near	 0269	  CODES	
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+ARRAYLength  . . . . . . . . . .	Byte	 01E7	  DATAS	
+ARRAYSorted  . . . . . . . . . .	Byte	 01E8	  DATAS	
+ARRAY  . . . . . . . . . . . . .	Byte	 0183	  DATAS	
+BUFFSTRING . . . . . . . . . . .	Byte	 011D	  DATAS	
+Decimal  . . . . . . . . . . . .	Byte	 0251	  DATAS	
+HEX  . . . . . . . . . . . . . .	Byte	 0252	  DATAS	
+MISSION1 . . . . . . . . . . . .	L Near	 002D	  CODES	
+MISSION2 . . . . . . . . . . . .	L Near	 003B	  CODES	
+MISSION3 . . . . . . . . . . . .	L Near	 0049	  CODES	
+MISSION4 . . . . . . . . . . . .	L Near	 0057	  CODES	
+MISSION5 . . . . . . . . . . . .	L Near	 0065	  CODES	
+Redo . . . . . . . . . . . . . .	L Near	 0009	  CODES	
+ReturnMenu . . . . . . . . . . .	L Near	 0005	  CODES	
+START  . . . . . . . . . . . . .	L Near	 0000	  CODES	
+SpiltSymbol  . . . . . . . . . .	Byte	 024C	  DATAS	
+TEMP . . . . . . . . . . . . . .	Byte	 0250	  DATAS	
+TIMEBUFF . . . . . . . . . . . .	Byte	 024D	  DATAS	
+TIPInputArray  . . . . . . . . .	Byte	 00D0	  DATAS	
+TIPInputString . . . . . . . . .	Byte	 008E	  DATAS	
+TIPInputTIME . . . . . . . . . .	Byte	 00FF	  DATAS	
+TIPMax . . . . . . . . . . . . .	Byte	 00C0	  DATAS	
+TIPMenu1 . . . . . . . . . . . .	Byte	 0000	  DATAS	
+TIPMenu2 . . . . . . . . . . . .	Byte	 001C	  DATAS	
+TIPMenu3 . . . . . . . . . . . .	Byte	 0045	  DATAS	
+TIPMenu4 . . . . . . . . . . . .	Byte	 005E	  DATAS	
+TIPMenu5 . . . . . . . . . . . .	Byte	 007F	  DATAS	
+TIPNewArray  . . . . . . . . . .	Byte	 00F4	  DATAS	
+TIPNewString . . . . . . . . . .	Byte	 00B4	  DATAS	
+TIPOriginalArray . . . . . . . .	Byte	 00E4	  DATAS	
+TIPOriginalString  . . . . . . .	Byte	 00A3	  DATAS	
+TOP  . . . . . . . . . . . . . .	Word	 0064	  STACKS	
+
+	   0 Warnings
+	   0 Errors

@@ -1,0 +1,44 @@
+; Top Design: "task1_lib:RisingEdge:schematic"
+; Netlisted using Hierarchy Policy: "Standard"
+
+Options ResourceUsage=yes UseNutmegFormat=no EnableOptim=no TopDesignName="task1_lib:RisingEdge:schematic" DcopOutputNodeVoltages=yes DcopOutputPinCurrents=yes DcopOutputAllSweepPoints=no DcopOutputDcopType=0
+V_Source:SRC1  Vout 0 Type="VtStep" V_Tran=pulse(time, 0 V, 1 V, 0 nsec, RT nsec) SaveCurrent=1 
+Tran:Tran1 StartTime=0.0 nsec StopTime=5.0 nsec MaxTimeStep=0.1 nsec LimitStepForTL=yes TimeStepControl=2 TruncTol=7.0 ChargeTol=1.0e-14 IntegMethod=0 MaxGearOrder=2 \
+Mu=0.5 MaxOrder=4 Freq[1]=1.0 GHz Order[1]=3 HB_Window=no \
+HB_Sol=no ImpApprox=no ShortTL_Delay=1.0 psec ImpMode=1 UseInitCond=no \
+LoadGminDC=no CheckKCL=yes CheckOnlyDeltaV=yes OverloadAlert=no DeviceBypass=no \
+MaxIters=10 MaxItersDC=200 DevOpPtLevel=0 StatusLevel=2 OutputAllPoints=yes \
+NoiseScale=1 ImpEnforcePassivity=yes \
+OutputPlan="Tran1_Output" 
+
+OutputPlan:Tran1_Output \
+      Type="Output" \
+      UseNodeNestLevel=yes \
+      NodeNestLevel=2 \
+      UseEquationNestLevel=yes \
+      EquationNestLevel=2 \
+      UseSavedEquationNestLevel=yes \
+      SavedEquationNestLevel=2 \
+      UseDeviceCurrentNestLevel=no \
+      DeviceCurrentNestLevel=0 \
+      DeviceCurrentDeviceType="All" \
+      DeviceCurrentSymSyntax=yes \
+      UseCurrentNestLevel=yes \
+      CurrentNestLevel=999 \
+      UseDeviceVoltageNestLevel=no \
+      DeviceVoltageNestLevel=0 \
+      DeviceVoltageDeviceType="All"
+
+
+RT=1.0
+
+#load "python","BatchSim"
+Controller:BatchSim1 Module="BatchSim"  \ 
+Analysis[1]="Tran1" \ 
+UseSweepPlan=yes  \ 
+SweepVar[1]="RT" SweepPlan[1]="BatchSim1_seg1"  \ 
+UseSeparateProcess=no \ 
+MergeDatasets=yes  \ 
+RemoveDatasets=no 
+
+SweepPlan:BatchSim1_seg1 Start=0.1 Stop=1 Step=0.1 

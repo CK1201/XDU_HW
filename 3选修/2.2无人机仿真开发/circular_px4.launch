@@ -1,0 +1,21 @@
+<launch> 
+	<!-- offboard 模式下飞圆形轨迹-->
+	<!-- 圆心在：切offbord时飞机所在位置
+	desire_z：期望圆半径 
+	desire_Radius：期望高度-->
+	
+  <arg name="world_path" default="$(find simulation)/worlds/densityColumn.world" />
+
+  <include file="$(find simulation)/launch/px4/iris_px4.launch">
+    <arg name="world_path" value="$(arg world_path)" />
+  </include>
+
+  <include file="$(find px4_command)/launch/circular.launch" >
+ 	<arg name="desire_z" value="10" />
+ 	<arg name="desire_Radius" value="40" />
+  </include>
+
+	<node pkg="simulation" type="keyboard_control_px4.py" name="keyboard_control_px4" output="screen" launch-prefix="gnome-terminal --tab -e">
+    </node>
+</launch>
+

@@ -1,0 +1,135 @@
+Microsoft (R) Macro Assembler Version 6.11		    12/04/20 13:50:54
+tempfile.asm						     Page 1 - 1
+
+
+ 0000				DATAS SEGMENT
+ 0000 50 6C 65 61 73 65			TIPInput DB 'Please input string:','$'
+       20 69 6E 70 75 74
+       20 73 74 72 69 6E
+       67 3A 24
+ 0015 4F 72 69 67 69 6E			TIP2_2 DB 'Original string:','$'
+       61 6C 20 73 74 72
+       69 6E 67 3A 24
+ 0026 54 68 65 20 6D 61			TIP2_3 DB 'The maximum is ','$'
+       78 69 6D 75 6D 20
+       69 73 20 24
+ 0036 64				StringInput DB 100
+ 0037  00							DB ?
+ 0038  0064 [							DB 100 DUP(?)
+        00
+       ]
+				    ;此处输入数据段代码  
+ 009C				DATAS ENDS
+
+ 0000				STACKS SEGMENT
+				    ;此处输入堆栈段代码
+ 0000				STACKS ENDS
+
+ 0000				CODES SEGMENT
+				    ASSUME CS:CODES,DS:DATAS,SS:STACKS
+ 0000				START:
+ 0000  B8 ---- R		    MOV AX,DATAS
+ 0003  8E D8			    MOV DS,AX
+				    ;输入字符串
+ 0005  0E E8 0044		    CALL InputString
+				    ;把输入字符串个数转化为字类型给CX来循环处理，并在结尾加上'$'
+ 0009  8D 1E 0038 R		    LEA BX,StringInput+2
+ 000D  A0 0037 R		    MOV AL,StringInput+1
+ 0010  98			    CBW
+ 0011  8B C8			    MOV CX,AX
+ 0013  03 D8			    ADD BX,AX
+ 0015  C6 07 24			    MOV BYTE PTR [BX],'$'
+				    ;显示原字符串
+ 0018  8D 16 0015 R		    LEA DX,TIP2_2
+ 001C  B4 09			    MOV AH,9
+ 001E  CD 21			    INT 21H
+ 0020  8D 16 0038 R		    LEA DX,StringInput+2
+ 0024  B4 09			    MOV AH,9
+ 0026  CD 21			    INT 21H
+ 0028  B2 0A			    MOV DL,10
+ 002A  B4 02			    MOV AH,02H
+ 002C  CD 21			    INT 21H
+				    ;输出最大值提示符
+ 002E  8D 16 0026 R		    LEA DX,TIP2_3
+ 0032  B4 09			    MOV AH,9
+ 0034  CD 21			    INT 21H
+				    ;找出最大值
+ 0036  8D 1E 0038 R		    LEA BX,StringInput+2
+ 003A  B2 00			    MOV DL,0
+ 003C				    FindMax:
+ 003C  38 17			    	CMP [BX],DL
+ 003E  72 02			    	JB NotBigger
+ 0040  8A 17			    	MOV DL,[BX]
+ 0042				    	NotBigger:
+ 0042  43			    		INC BX
+ 0043  E2 F7			    LOOP FindMax
+				    ;输出最大
+				    
+				    ;MOV DL,10
+ 0045  B4 02			    MOV AH,02H
+ 0047  CD 21			    INT 21H
+				    ;此处输入代码段代码
+ 0049  B4 4C			    MOV AH,4CH
+ 004B  CD 21			    INT 21H
+				    
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;函数定义区;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				;输入显示
+ 004D				    InputString PROC FAR
+ 004D				    	INPUT1_1:
+ 004D  8D 16 0000 R					LEA DX,TIPInput
+ 0051  B4 09			    		MOV AH,9
+ 0053  CD 21			    		INT 21H
+ 0055  8D 16 0036 R		    		LEA DX,StringInput
+ 0059  B4 0A			    		MOV AH,0AH
+ 005B  CD 21			    		INT 21H
+ 005D  80 3E 0037 R 00		    		CMP [StringInput+1],0
+ 0062  74 E9			    		JZ INPUT1_1
+ 0064  B2 0A			    	MOV DL,10
+ 0066  B4 02			    	MOV AH,02H
+ 0068  CD 21			    	INT 21H
+ 006A  CB			    	RET
+ 006B				   	InputString ENDP
+				    
+				    
+ 006B				CODES ENDS
+				    END START
+
+
+
+Microsoft (R) Macro Assembler Version 6.11		    12/04/20 13:50:54
+tempfile.asm						     Symbols 2 - 1
+
+
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+CODES  . . . . . . . . . . . . .	16 Bit	 006B	  Para	  Private 
+DATAS  . . . . . . . . . . . . .	16 Bit	 009C	  Para	  Private 
+STACKS . . . . . . . . . . . . .	16 Bit	 0000	  Para	  Private 
+
+
+Procedures,  parameters and locals:
+
+                N a m e                 Type     Value    Attr
+
+InputString  . . . . . . . . . .	P Far	 004D	  CODES	Length= 001E Public
+  INPUT1_1 . . . . . . . . . . .	L Near	 004D	  CODES	
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+FindMax  . . . . . . . . . . . .	L Near	 003C	  CODES	
+NotBigger  . . . . . . . . . . .	L Near	 0042	  CODES	
+START  . . . . . . . . . . . . .	L Near	 0000	  CODES	
+StringInput  . . . . . . . . . .	Byte	 0036	  DATAS	
+TIP2_2 . . . . . . . . . . . . .	Byte	 0015	  DATAS	
+TIP2_3 . . . . . . . . . . . . .	Byte	 0026	  DATAS	
+TIPInput . . . . . . . . . . . .	Byte	 0000	  DATAS	
+
+	   0 Warnings
+	   0 Errors

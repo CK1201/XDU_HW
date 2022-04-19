@@ -1,0 +1,8 @@
+<launch> 
+  <include file="$(find simulation)/launch/px4/2Dlidar_px4.launch"/>
+  <include file="$(find px4_command)/launch/collision_avoidance_matlabvfh.launch" >
+  </include>
+	<node pkg="px4_command" type="set_mode_node" name="set_mode_node" output="screen" launch-prefix="gnome-terminal --tab -e">
+    </node>
+</launch>
+

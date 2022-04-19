@@ -1,0 +1,88 @@
+Microsoft (R) Macro Assembler Version 6.11		    10/27/20 19:56:28
+tempfile.asm						     Page 1 - 1
+
+
+ 0000				DATAS SEGMENT
+ 0000 49 4E 50 55 54 20		     TIPS DB 'INPUT 1/2/3:',0DH,0AH,'$'
+       31 2F 32 2F 33 3A
+       0D 0A 24
+ 000F 0D 0A 24			     CRLF DB 0DH,0AH,'$'
+ 0012 43 4B 57 55 0D 0A		     NAM DB 'CKWU',0DH,0AH,'$'
+       24
+ 0019 31 38 30 32 39 31		     NUM DB '18029100040',0DH,0AH,'$'
+       30 30 30 34 30 0D
+       0A 24
+ 0027				DATAS ENDS
+
+ 0000				STACKS SEGMENT STACK
+ 0000  0100 [			    DB 256 DUP(?)
+        00
+       ]
+ 0100				STACKS ENDS
+
+ 0000				CODES SEGMENT
+				    ASSUME CS:CODES,DS:DATAS,SS:STACKS
+ 0000				START:
+ 0000  B8 ---- R		    MOV AX,DATAS
+ 0003  8E D8			    MOV DS,AX
+ 0005				INPUT:
+ 0005  8D 16 0000 R			LEA DX,TIPS
+ 0009  B4 09			    MOV AH,09H
+ 000B  CD 21			    INT 21H
+ 000D  B4 01				MOV AH,01H
+ 000F  CD 21				INT 21H
+ 0011  8D 16 000F R			LEA DX,CRLF
+ 0015  B4 09				MOV AH,09H
+ 0017  CD 21				INT 21H   
+ 0019  3C 31				CMP AL,'1'
+ 001B  74 0A				JE DISPNAME
+ 001D  3C 32				CMP AL,'2'
+ 001F  74 10				JE DISPNUM
+ 0021  3C 33				CMP AL,'3'
+ 0023  74 14				JE DONE
+ 0025  EB DE				JMP INPUT
+ 0027				DISPNAME:
+ 0027  8D 16 0012 R			LEA DX,NAM
+ 002B  B4 09				MOV AH,09H
+ 002D  CD 21				INT 21H
+ 002F  EB 08				JMP DONE
+ 0031				DISPNUM:
+ 0031  8D 16 0019 R			LEA DX,NUM
+ 0035  B4 09				MOV AH,09H
+ 0037  CD 21				INT 21H
+ 0039				DONE:
+ 0039  B4 4C			    MOV AH,4CH
+ 003B  CD 21			    INT 21H
+ 003D				CODES ENDS
+				    END START
+Microsoft (R) Macro Assembler Version 6.11		    10/27/20 19:56:28
+tempfile.asm						     Symbols 2 - 1
+
+
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+CODES  . . . . . . . . . . . . .	16 Bit	 003D	  Para	  Private 
+DATAS  . . . . . . . . . . . . .	16 Bit	 0027	  Para	  Private 
+STACKS . . . . . . . . . . . . .	16 Bit	 0100	  Para	  Stack	  
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+CRLF . . . . . . . . . . . . . .	Byte	 000F	  DATAS	
+DISPNAME . . . . . . . . . . . .	L Near	 0027	  CODES	
+DISPNUM  . . . . . . . . . . . .	L Near	 0031	  CODES	
+DONE . . . . . . . . . . . . . .	L Near	 0039	  CODES	
+INPUT  . . . . . . . . . . . . .	L Near	 0005	  CODES	
+NAM  . . . . . . . . . . . . . .	Byte	 0012	  DATAS	
+NUM  . . . . . . . . . . . . . .	Byte	 0019	  DATAS	
+START  . . . . . . . . . . . . .	L Near	 0000	  CODES	
+TIPS . . . . . . . . . . . . . .	Byte	 0000	  DATAS	
+
+	   0 Warnings
+	   0 Errors

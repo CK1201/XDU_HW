@@ -1,0 +1,66 @@
+Microsoft (R) Macro Assembler Version 6.11		    10/27/20 20:22:03
+tempfile.asm						     Page 1 - 1
+
+
+ 0000				DATAS SEGMENT
+ 0000 02 00 01 02			ARRAY DB 02H,00H,01H,02H
+				    ;此处输入数据段代码  
+ 0004				DATAS ENDS
+
+ 0000				STACKS SEGMENT
+				    ;此处输入堆栈段代码
+ 0000				STACKS ENDS
+
+ 0000				CODES SEGMENT
+				    ASSUME CS:CODES,DS:DATAS,SS:STACKS
+ 0000				START:
+ 0000  B8 ---- R		    MOV AX,DATAS
+ 0003  8E D8			    MOV DS,AX
+ 0005  8D 36 0000 R		    LEA SI,ARRAY
+ 0009  8B 0C			    MOV CX,[SI]
+ 000B  B8 0000			    MOV AX,0
+ 000E  BA 0000			    MOV DX,0
+ 0011  83 C6 02			    ADD SI,2
+ 0014				 L1:
+ 0014  8A 1C			 	MOV BL,[SI]
+ 0016  02 C3			 	ADD AL,BL
+ 0018  80 D4 00			 	ADC AH,0
+ 001B  73 03			 	JNC L2
+ 001D  BA FFFF			 	MOV DX,-1
+				 	
+ 0020  46			 L2:INC SI
+ 0021  E2 F1			 	LOOP L1
+				    
+				    
+				    ;此处输入代码段代码
+ 0023  B4 4C			    MOV AH,4CH
+ 0025  CD 21			    INT 21H
+ 0027				CODES ENDS
+				    END START
+
+Microsoft (R) Macro Assembler Version 6.11		    10/27/20 20:22:03
+tempfile.asm						     Symbols 2 - 1
+
+
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+CODES  . . . . . . . . . . . . .	16 Bit	 0027	  Para	  Private 
+DATAS  . . . . . . . . . . . . .	16 Bit	 0004	  Para	  Private 
+STACKS . . . . . . . . . . . . .	16 Bit	 0000	  Para	  Private 
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+ARRAY  . . . . . . . . . . . . .	Byte	 0000	  DATAS	
+L1 . . . . . . . . . . . . . . .	L Near	 0014	  CODES	
+L2 . . . . . . . . . . . . . . .	L Near	 0020	  CODES	
+START  . . . . . . . . . . . . .	L Near	 0000	  CODES	
+
+	   0 Warnings
+	   0 Errors

@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+
+<AdsNavigatorSetupFile Version="1.0">
+
+    <Filters>
+        <Net>1</Net>
+        <Pins>1</Pins>
+        <Vias>1</Vias>
+        <InstancePins>1</InstancePins>
+        <Instances>1</Instances>
+        <Planes>1</Planes>
+        <Interconnects>1</Interconnects>
+        <Others>1</Others>
+        <Arcs>1</Arcs>
+        <Circles>1</Circles>
+        <CircularArcs>1</CircularArcs>
+        <Ellipses>1</Ellipses>
+        <Paths>1</Paths>
+        <Polygons>1</Polygons>
+        <Polylines>1</Polylines>
+        <Rectangles>1</Rectangles>
+        <Text>1</Text>
+        <TextDisplays>1</TextDisplays>
+        <Traces>1</Traces>
+        <Wires>1</Wires>
+    </Filters>
+
+</AdsNavigatorSetupFile>

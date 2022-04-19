@@ -1,0 +1,366 @@
+Microsoft (R) Macro Assembler Version 6.11		    12/05/20 17:31:49
+tempfile.asm						     Page 1 - 1
+
+
+ 0000				DATAS SEGMENT
+ 0000 50 6C 65 61 73 65			TIPInput DB 'Please input array:','$'
+       20 69 6E 70 75 74
+       20 61 72 72 61 79
+       3A 24
+ 0014 4F 72 69 67 69 6E			TIP3_2 DB 'Original array:','$'
+       61 6C 20 61 72 72
+       61 79 3A 24
+ 0024 4E 65 77 20 61 72			TIP3_3 DB 'New array:','$'
+       72 61 79 3A 24
+ 002F 64				StringInput DB 100
+ 0030  00							DB ?
+ 0031  0064 [							DB 100 DUP(?)
+        00
+       ]
+ 0095  0064 [				ARRAY DB 100 DUP(0)
+        00
+       ]
+ 00F9 00				ARRAYLength DB 0
+ 00FA  0064 [				ARRAYSorted DB 100 DUP(0)
+        00
+       ]
+ 015E 2C				SpiltSymbol DB ','
+ 015F 00				TEMP DB 0
+ 0160 0A				Decimal DB 10
+ 0161 10				HEX DB 16
+ 0162 2F				NNN DB 47
+				    ;此处输入数据段代码  
+ 0163				DATAS ENDS
+
+ 0000				STACKS SEGMENT
+ 0000  0064 [				DB 100 DUP(?)
+        00
+       ]
+ 0064					TOP LABEL WORD
+				    ;此处输入堆栈段代码
+ 0064				STACKS ENDS
+
+ 0000				CODES SEGMENT
+				    ASSUME CS:CODES,DS:DATAS,SS:STACKS
+ 0000				START:
+ 0000  B8 ---- R		    MOV AX,DATAS
+ 0003  8E D8			    MOV DS,AX
+				    ;输入字符串
+ 0005  0E E8 0039			CALL InputString
+				    ;把字符串转为数字放入数组
+ 0009  0E E8 0053		    CALL Str2Num
+				    ;输出原数组
+ 000D  8D 16 0014 R		    LEA DX,TIP3_2
+ 0011  B4 09			    MOV AH,9
+ 0013  CD 21			    INT 21H
+				    
+ 0015  A0 00F9 R		    MOV AL,[ARRAYLength]
+ 0018  B4 00			    MOV AH,0
+ 001A  8B C8			    MOV CX,AX
+ 001C  8D 36 0095 R		    LEA SI,ARRAY
+ 0020  0E E8 0101			CALL DISPARRRY
+					
+ 0024  B2 0A				MOV DL,10
+ 0026  B4 02			    MOV AH,02H
+ 0028  CD 21			    INT 21H
+				    ;递增排序
+ 002A  0E E8 0089		    CALL SortARRAY
+				    
+				    
+					;输出新数组
+ 002E  8D 16 0024 R			LEA DX,TIP3_3
+ 0032  B4 09			    MOV AH,9
+ 0034  CD 21			    INT 21H
+				    
+ 0036  8D 36 00FA R		    LEA SI,ARRAYSorted
+ 003A  0E E8 00E7			CALL DISPARRRY
+				    
+				    
+ 003E  B4 4C				MOV AH,4CH
+ 0040  CD 21			    INT 21H
+				    
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;函数定义区;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				;输入字符串
+ 0042				    InputString PROC FAR
+ 0042				    	INPUT1_1:
+ 0042  8D 16 0000 R					LEA DX,TIPInput
+ 0046  B4 09			    		MOV AH,9
+ 0048  CD 21			    		INT 21H
+ 004A  8D 16 002F R		    		LEA DX,StringInput
+ 004E  B4 0A			    		MOV AH,0AH
+ 0050  CD 21			    		INT 21H
+ 0052  80 3E 0030 R 00		    		CMP [StringInput+1],0
+ 0057  74 E9			    		JZ INPUT1_1
+ 0059  B2 0A			    	MOV DL,10
+ 005B  B4 02			    	MOV AH,02H
+ 005D  CD 21			    	INT 21H
+ 005F  CB			    	RET
+ 0060				   	InputString ENDP
+				;把字符串转为数字放入数组,以逗号分隔和结尾
+				;入口参数：无
+				;出口参数：无
+ 0060					Str2Num PROC FAR
+ 0060  A0 0030 R				MOV AL,StringInput+1
+ 0063  98			    	CBW
+ 0064  8B C8			    	MOV CX,AX
+				    	
+ 0066  8D 36 0031 R				LEA SI,StringInput+2
+ 006A  8D 3E 0095 R				LEA DI,ARRAY
+ 006E  B6 00					MOV DH,0			;用于存放数组个数
+ 0070  B2 00					MOV DL,0			;用于存放该数字位数
+ 0072  B0 00					MOV AL,0			;用于存放该数字十进制
+ 0074						Spilt:
+ 0074  8A 1E 015E R					MOV BL,[SpiltSymbol]
+ 0078  38 1C						CMP BYTE PTR [SI],BL
+ 007A  74 05						JZ AddNum
+ 007C  46						INC SI
+ 007D  FE C2						INC DL
+ 007F  EB 2F						JMP NotSpilt
+ 0081							AddNum:
+ 0081  FE C6							INC DH
+ 0083  51							PUSH CX
+ 0084  56							PUSH SI
+								
+ 0085  8A C2							MOV AL,DL
+ 0087  98							CBW
+ 0088  8B C8			    			MOV CX,AX
+				    			
+ 008A				    			Return:
+ 008A  4E			    				DEC SI
+				    				;MOV DL,[SI]
+				    				;MOV AH,02H
+				    				;INT 21H
+ 008B  E2 FD			    				LOOP Return
+				    			
+ 008D  8B C8			    			MOV CX,AX
+ 008F  49			    			DEC CX
+				    			
+ 0090  B0 00			    			MOV AL,0
+ 0092  B4 00			    			MOV AH,0
+				    			
+ 0094  8A 04			    			MOV AL,[SI]
+ 0096  2C 30			    			SUB AL,'0'
+				    			
+				    			
+				    			
+ 0098								Str2Dec:
+ 0098  46								INC SI
+ 0099  F6 26 0160 R							MUL Decimal
+ 009D  8A 1C								MOV BL,[SI]
+ 009F  80 EB 30								SUB BL,'0'
+ 00A2  02 C3								ADD AL,BL
+ 00A4  E2 F2								LOOP Str2Dec
+									
+ 00A6  88 05							MOV [DI],AL
+ 00A8  47							INC DI
+ 00A9  B2 00							MOV DL,0
+ 00AB  B0 00							MOV AL,0
+ 00AD  5E							POP SI
+ 00AE  46							INC SI;指向逗号下一个
+ 00AF  59							POP CX
+ 00B0							NotSpilt:
+ 00B0  E2 C2						LOOP Spilt
+ 00B2  88 36 00F9 R				MOV [ARRAYLength],DH
+ 00B6  CB					RET
+ 00B7					Str2Num ENDP
+				;递增排序
+				;入口参数：无
+				;出口参数：无
+ 00B7					SortARRAY PROC FAR
+ 00B7  8D 1E 0095 R				LEA BX,ARRAY
+ 00BB  8D 2E 00FA R				LEA BP,ARRAYSorted
+ 00BF  BE 0000					MOV SI,0
+ 00C2  BF 0000					MOV DI,0
+						
+ 00C5  A0 00F9 R				MOV AL,[ARRAYLength];外循环
+ 00C8						SORT:
+ 00C8  8A 26 00F9 R					MOV AH,[ARRAYLength]
+ 00CC  B6 7F						MOV DH,127
+ 00CE							FindMin:
+ 00CE  3A 30							CMP DH,[BX][SI]
+ 00D0  72 04							JB FindMinNEXT
+ 00D2  8A 30							MOV DH,[BX][SI]
+ 00D4  8B CE							MOV CX,SI
+ 00D6								FindMinNEXT:
+ 00D6  46							INC SI
+ 00D7  FE CC							DEC AH
+ 00D9  75 F3							JNZ FindMin
+ 00DB  88 33						MOV [BP][DI],DH
+ 00DD  47						INC DI
+ 00DE  8B F1						MOV SI,CX
+ 00E0  B6 7F						MOV DH,127
+ 00E2  88 30						MOV [BX][SI],DH
+ 00E4  BE 0000						MOV SI,0
+ 00E7  FE C8						DEC AL
+ 00E9  75 DD						JNZ SORT
+
+						;MOV DL,[BX]
+						
+ 00EB  CB					RET
+ 00EC					SortARRAY ENDP
+				;把十六进制数输出
+				;入口参数：十六进制数地址SI
+				;出口参数：无
+ 00EC					Disp PROC FAR
+ 00EC  51					PUSH CX
+ 00ED  8A 04					MOV AL,[SI]
+ 00EF						NEXTNum:
+ 00EF  98						CBW
+ 00F0  F6 36 0161 R					DIV HEX
+ 00F4  80 FC 09						CMP AH,9
+ 00F7  77 05						JA LETTER
+ 00F9  80 C4 30						ADD AH,'0'
+ 00FC  EB 06						JMP NotLETTER
+ 00FE							LETTER:
+ 00FE  80 EC 0A							SUB AH,10
+ 0101  80 C4 41							ADD AH,'A'
+							
+ 0104							NotLETTER:
+ 0104  50							PUSH AX
+ 0105  FE 06 015F R						INC [TEMP]
+							
+ 0109  3C 00							CMP AL,0
+ 010B  74 02							JZ NoMore
+							
+ 010D  EB E0							JMP NEXTNum
+							
+ 010F						NoMore:
+ 010F  A0 015F R					MOV AL,[TEMP]
+ 0112  98						CBW
+ 0113  8B C8						MOV CX,AX
+							
+ 0115							OUTNum:
+ 0115  5A							POP DX
+ 0116  86 D6							XCHG DL,DH
+ 0118  B4 02			    			MOV AH,02H
+ 011A  CD 21			    			INT 21H
+ 011C  E2 F7			    			LOOP OUTNum
+							
+							
+							
+ 011E  C6 06 015F R 00				MOV [TEMP],0
+ 0123  59					POP CX
+ 0124  CB					RET
+ 0125					Disp ENDP
+				;输出数组
+				;入口参数：数组首地址SI，长度CX
+				;出口参数：无
+ 0125					DISPARRRY PROC FAR
+ 0125  50					PUSH AX
+ 0126  53			 		PUSH BX
+ 0127  51			 		PUSH CX
+ 0128  52			 		PUSH DX
+				 		
+ 0129  A0 00F9 R				MOV AL,[ARRAYLength]
+ 012C  B4 00					MOV AH,0
+ 012E  8B C8					MOV CX,AX
+ 0130  49					DEC CX
+ 0131  0E E8 FFB7				CALL Disp
+ 0135  46					INC SI
+ 0136						DispNextNum:
+ 0136  8A 16 015E R					MOV DL,[SpiltSymbol]
+ 013A  B4 02			    		MOV AH,02H
+ 013C  CD 21			    		INT 21H
+ 013E  0E E8 FFAA					CALL Disp
+ 0142  46			    		INC SI
+ 0143  E2 F1			    	LOOP DispNextNum
+				    	
+ 0145  5A			    	POP DX
+ 0146  59			 		POP CX
+ 0147  5B			 		POP BX
+ 0148  58			 		POP AX
+ 0149  CB					RET
+ 014A					DISPARRRY ENDP
+
+
+
+
+
+ 014A				CODES ENDS
+				    END START
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Microsoft (R) Macro Assembler Version 6.11		    12/05/20 17:31:49
+tempfile.asm						     Symbols 2 - 1
+
+
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+CODES  . . . . . . . . . . . . .	16 Bit	 014A	  Para	  Private 
+DATAS  . . . . . . . . . . . . .	16 Bit	 0163	  Para	  Private 
+STACKS . . . . . . . . . . . . .	16 Bit	 0064	  Para	  Private 
+
+
+Procedures,  parameters and locals:
+
+                N a m e                 Type     Value    Attr
+
+DISPARRRY  . . . . . . . . . . .	P Far	 0125	  CODES	Length= 0025 Public
+  DispNextNum  . . . . . . . . .	L Near	 0136	  CODES	
+Disp . . . . . . . . . . . . . .	P Far	 00EC	  CODES	Length= 0039 Public
+  NEXTNum  . . . . . . . . . . .	L Near	 00EF	  CODES	
+  LETTER . . . . . . . . . . . .	L Near	 00FE	  CODES	
+  NotLETTER  . . . . . . . . . .	L Near	 0104	  CODES	
+  NoMore . . . . . . . . . . . .	L Near	 010F	  CODES	
+  OUTNum . . . . . . . . . . . .	L Near	 0115	  CODES	
+InputString  . . . . . . . . . .	P Far	 0042	  CODES	Length= 001E Public
+  INPUT1_1 . . . . . . . . . . .	L Near	 0042	  CODES	
+SortARRAY  . . . . . . . . . . .	P Far	 00B7	  CODES	Length= 0035 Public
+  SORT . . . . . . . . . . . . .	L Near	 00C8	  CODES	
+  FindMin  . . . . . . . . . . .	L Near	 00CE	  CODES	
+  FindMinNEXT  . . . . . . . . .	L Near	 00D6	  CODES	
+Str2Num  . . . . . . . . . . . .	P Far	 0060	  CODES	Length= 0057 Public
+  Spilt  . . . . . . . . . . . .	L Near	 0074	  CODES	
+  AddNum . . . . . . . . . . . .	L Near	 0081	  CODES	
+  Return . . . . . . . . . . . .	L Near	 008A	  CODES	
+  Str2Dec  . . . . . . . . . . .	L Near	 0098	  CODES	
+  NotSpilt . . . . . . . . . . .	L Near	 00B0	  CODES	
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+ARRAYLength  . . . . . . . . . .	Byte	 00F9	  DATAS	
+ARRAYSorted  . . . . . . . . . .	Byte	 00FA	  DATAS	
+ARRAY  . . . . . . . . . . . . .	Byte	 0095	  DATAS	
+Decimal  . . . . . . . . . . . .	Byte	 0160	  DATAS	
+HEX  . . . . . . . . . . . . . .	Byte	 0161	  DATAS	
+NNN  . . . . . . . . . . . . . .	Byte	 0162	  DATAS	
+START  . . . . . . . . . . . . .	L Near	 0000	  CODES	
+SpiltSymbol  . . . . . . . . . .	Byte	 015E	  DATAS	
+StringInput  . . . . . . . . . .	Byte	 002F	  DATAS	
+TEMP . . . . . . . . . . . . . .	Byte	 015F	  DATAS	
+TIP3_2 . . . . . . . . . . . . .	Byte	 0014	  DATAS	
+TIP3_3 . . . . . . . . . . . . .	Byte	 0024	  DATAS	
+TIPInput . . . . . . . . . . . .	Byte	 0000	  DATAS	
+TOP  . . . . . . . . . . . . . .	Word	 0064	  STACKS	
+
+	   0 Warnings
+	   0 Errors

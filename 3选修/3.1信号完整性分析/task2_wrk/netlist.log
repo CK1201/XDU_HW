@@ -1,0 +1,42 @@
+; Top Design: "task2_lib:FarEndCrosstalk:schematic"
+; Netlisted using Hierarchy Policy: "Standard"
+
+Options ResourceUsage=yes UseNutmegFormat=no EnableOptim=no TopDesignName="task2_lib:FarEndCrosstalk:schematic" DcopOutputNodeVoltages=yes DcopOutputPinCurrents=yes DcopOutputAllSweepPoints=no DcopOutputDcopType=0
+R:R3  0 Vnear2 R=50 Ohm Noise=yes 
+R:R2  N__12 0 R=50 Ohm Noise=yes 
+R:R4  Vfar2 0 R=50 Ohm Noise=yes 
+V_Source:SRC1  N__9 0 Type="VtStep" V_Tran=pulse(time, 0 V, 1 V, 0 nsec, 0.3 nsec) SaveCurrent=1 
+model SSub1 SSUB Er=4 Mur=1 B=19.6 mil T=1.6 mil Cond=5.8E+7 TanD=0.02 DielectricLossModel=1 FreqForEpsrTanD=1.0 GHz LowFreqForTanD=1.0 kHz HighFreqForTanD=1.0 THz Rough=0 mil 
+SCLIN:CLin2  N__9 Vnear2 Vfar2 N__12 Subst="SSub1" W=5.2 mil S=9 mil L=3000 mil 
+model MSub1 MSUB H=4 mil Er=4 Mur=1 Cond=5.8E+7 Hu=3.93701e+34 mil T=1.6 mil TanD=0.02 Rough=0 mil DielectricLossModel=1 FreqForEpsrTanD=1.0 GHz LowFreqForTanD=1.0 kHz HighFreqForTanD=1.0 THz RoughnessModel=2 
+Tran:Tran2 StartTime=0.0 nsec StopTime=3 nsec MaxTimeStep=0.05 nsec LimitStepForTL=yes TimeStepControl=2 TruncTol=7.0 ChargeTol=1.0e-14 IntegMethod=0 MaxGearOrder=2 \
+Mu=0.5 MaxOrder=4 Freq[1]=1.0 GHz Order[1]=3 HB_Window=no \
+HB_Sol=no ImpApprox=no ShortTL_Delay=1.0 psec ImpMode=1 UseInitCond=no \
+LoadGminDC=no CheckKCL=yes CheckOnlyDeltaV=yes OverloadAlert=no DeviceBypass=no \
+MaxIters=10 MaxItersDC=200 DevOpPtLevel=0 StatusLevel=2 OutputAllPoints=yes \
+NoiseScale=1 ImpEnforcePassivity=yes \
+OutputPlan="Tran2_Output" 
+
+OutputPlan:Tran2_Output \
+      Type="Output" \
+      UseNodeNestLevel=yes \
+      NodeNestLevel=2 \
+      UseEquationNestLevel=yes \
+      EquationNestLevel=2 \
+      UseSavedEquationNestLevel=yes \
+      SavedEquationNestLevel=2 \
+      UseDeviceCurrentNestLevel=no \
+      DeviceCurrentNestLevel=0 \
+      DeviceCurrentDeviceType="All" \
+      DeviceCurrentSymSyntax=yes \
+      UseCurrentNestLevel=yes \
+      CurrentNestLevel=999 \
+      UseDeviceVoltageNestLevel=no \
+      DeviceVoltageNestLevel=0 \
+      DeviceVoltageDeviceType="All"
+
+R:R5  Vfar 0 R=50 Ohm Noise=yes 
+R:R6  0 Vnear R=50 Ohm Noise=yes 
+R:R7  N__7 0 R=50 Ohm Noise=yes 
+MCLIN:CLin1  N__11 Vnear Vfar N__7 Subst="MSub1" W=5.2 mil S=9 mil L=3000 mil 
+V_Source:SRC2  N__11 0 Type="VtStep" V_Tran=pulse(time, 0 V, 1 V, 0 nsec, 0.3 nsec) SaveCurrent=1 

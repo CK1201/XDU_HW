@@ -1,0 +1,9 @@
+# @(#) $Source: /cvs/wlv/src/pde/text/layout_lib.prf.mil,v $ $Revision: 1.1 $ $Date: 2010/11/02 04:49:22 $
+pathWidth 25.000000
+textHeight 10.000000
+instTextHeight 10.000000
+gridSnapX 5.000000
+gridSnapY 5.000000
+tapLength 25.000000
+portSize 40.00000
+unitsLng 1

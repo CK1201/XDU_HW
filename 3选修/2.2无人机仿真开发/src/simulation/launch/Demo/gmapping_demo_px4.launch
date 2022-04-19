@@ -1,0 +1,15 @@
+<launch> 
+  <arg name="world_path" default="$(find simulation)/worlds/cloister.world" />
+
+  <include file="$(find simulation)/launch/px4/2Dlidar_px4.launch">
+    <arg name="world_path" value="$(arg world_path)" />
+  </include>
+
+    <include file="$(find ros_slam)/launch/gmapping.launch">
+    </include>
+
+ 	<node pkg="simulation" type="keyboard_control_px4.py" name="keyboard_control_px4" output="screen" launch-prefix="gnome-terminal --tab -e">
+    </node>
+
+</launch>
+

@@ -1,0 +1,35 @@
+DATAS SEGMENT
+	ARRAY DB 02H,00H,01H,02H
+    ;此处输入数据段代码  
+DATAS ENDS
+
+STACKS SEGMENT
+    ;此处输入堆栈段代码
+STACKS ENDS
+
+CODES SEGMENT
+    ASSUME CS:CODES,DS:DATAS,SS:STACKS
+START:
+    MOV AX,DATAS
+    MOV DS,AX
+    LEA SI,ARRAY
+    MOV CX,[SI]
+    MOV AX,0
+    MOV DX,0
+    ADD SI,2
+ L1:
+ 	MOV BL,[SI]
+ 	ADD AL,BL
+ 	ADC AH,0
+ 	JNC L2
+ 	MOV DX,-1
+ 	
+ L2:INC SI
+ 	LOOP L1
+    
+    
+    ;此处输入代码段代码
+    MOV AH,4CH
+    INT 21H
+CODES ENDS
+    END START

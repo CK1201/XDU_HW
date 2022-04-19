@@ -1,0 +1,12 @@
+# @(#) $Source: /cvs/wlv/src/pde/text/schematic_lib.prf.mil,v $ $Revision: 1.1 $ $Date: 2010/11/02 04:49:22 $  
+textHeight 0.125000
+instTextHeight 0.125000
+gridSnapX 0.125000
+gridSnapY 0.125000
+tapLength 25.000000
+portSize 4.000000
+unitsLng 1
+instNameLayerID ads_device:ads_annotate
+instIDLayerID ads_annotate:ads_drawing7
+instParam1LayerID ads_annotate:drawing
+pinAnnotLayerID ads_pin:ads_label

@@ -1,0 +1,23 @@
+<launch> 
+  <arg name="world_path" default="$(find simulation)/worlds/cloister.world" />
+
+  <!-- 这里配置飞机不发布odom tf ,但是注意这样配置并不会影响其发布odom相关的topic-->
+  <arg name="px4_config" default="$(find simulation)/resource/px4_config_noTF.yaml" />
+
+
+
+  <include file="$(find simulation)/launch/px4/realsense_camera_px4.launch">
+    <arg name="world_path" value="$(arg world_path)" />
+    <arg name="px4_config" value="$(arg px4_config)" />
+   </include>
+
+  <node pkg="tf" type="static_transform_publisher" name="tf_imu"
+          args="0 0 0 0 0 0 base_link imu_link 10"/>
+
+
+	<node pkg="simulation" type="keyboard_control_px4.py" name="keyboard_control_px4" output="screen" launch-prefix="gnome-terminal --tab -e">
+	</node>
+
+
+</launch>
+

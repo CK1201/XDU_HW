@@ -1,0 +1,69 @@
+<!DOCTYPE cild_doc>
+<cild libraryName="task2_lib">
+ <CommonData Version="1.1">
+  <SimMode mode="0"/>
+  <StatIter num="250"/>
+  <Optimize GoalValue="50" GoalTarget="0"/>
+  <Variables>
+   <Variable statValueUnitType="-1" isAbsOfNegativeValue="0" name="freq" points="10" unitFamily="0" start="1" optimizeMode="1" nominalUnitType="3" Version="1.3" step="1" sweepMode="1" type="0" startUnitType="3" nominal="1" stopUnitType="3" statMode="4" enabled="1" stop="10" statistical="0" stepUnitType="3" statValue="10" sweep="1">
+    <roles/>
+   </Variable>
+   <Variable statValueUnitType="-1" isAbsOfNegativeValue="0" name="Length" points="10" unitFamily="1" start="1" optimizeMode="1" nominalUnitType="5" Version="1.3" step="1" sweepMode="1" type="0" startUnitType="5" nominal="10" stopUnitType="5" statMode="0" enabled="1" stop="10" statistical="0" stepUnitType="5" statValue="10" sweep="0">
+    <roles/>
+   </Variable>
+   <Variable statValueUnitType="-1" isAbsOfNegativeValue="0" name="Width" points="10" unitFamily="1" start="1" optimizeMode="0" nominalUnitType="5" Version="1.3" step="1" sweepMode="1" type="4" startUnitType="5" nominal="1" stopUnitType="5" statMode="0" enabled="1" stop="10" statistical="0" stepUnitType="5" statValue="10" sweep="1">
+    <roles/>
+   </Variable>
+   <Variable statValueUnitType="-1" isAbsOfNegativeValue="0" name="Space" points="10" unitFamily="1" start="1" optimizeMode="0" nominalUnitType="5" Version="1.3" step="1" sweepMode="1" type="4" startUnitType="5" nominal="1" stopUnitType="5" statMode="0" enabled="1" stop="10" statistical="0" stepUnitType="5" statValue="10" sweep="1">
+    <roles/>
+   </Variable>
+   <Variable statValueUnitType="-1" isAbsOfNegativeValue="0" name="Clearance" points="10" unitFamily="1" start="1" optimizeMode="0" nominalUnitType="5" Version="1.3" step="1" sweepMode="1" type="4" startUnitType="5" nominal="1" stopUnitType="5" statMode="0" enabled="0" stop="10" statistical="0" stepUnitType="5" statValue="10" sweep="0">
+    <roles/>
+   </Variable>
+   <Variable statValueUnitType="-1" isAbsOfNegativeValue="0" name="silkscreenTop__Thickness" points="10" unitFamily="1" start="1" optimizeMode="0" nominalUnitType="2" Version="1.3" step="1" sweepMode="1" type="2" startUnitType="2" nominal="0" stopUnitType="2" statMode="0" enabled="1" stop="10" statistical="0" stepUnitType="2" statValue="10" sweep="0">
+    <roles>
+     <role value="5" key="0"/>
+     <role value="silkscreenTop" key="3"/>
+    </roles>
+   </Variable>
+   <Variable statValueUnitType="-1" isAbsOfNegativeValue="0" name="silkscreenTop__Angle" points="10" unitFamily="4" start="45" optimizeMode="0" nominalUnitType="0" Version="1.3" step="10" sweepMode="1" type="2" startUnitType="0" nominal="90" stopUnitType="0" statMode="0" enabled="1" stop="135" statistical="0" stepUnitType="0" statValue="10" sweep="0">
+    <roles>
+     <role value="6" key="0"/>
+     <role value="silkscreenTop" key="3"/>
+    </roles>
+   </Variable>
+   <Variable statValueUnitType="-1" isAbsOfNegativeValue="0" name="Thickness_1" points="10" unitFamily="1" start="1" optimizeMode="0" nominalUnitType="5" Version="1.3" step="1" sweepMode="1" type="1" startUnitType="5" nominal="25" stopUnitType="5" statMode="0" enabled="1" stop="10" statistical="0" stepUnitType="5" statValue="10" sweep="0">
+    <roles>
+     <role value="1" key="0"/>
+     <role value="1" key="1"/>
+    </roles>
+   </Variable>
+   <Variable statValueUnitType="-1" isAbsOfNegativeValue="0" name="Alumina__Er__Real" points="10" unitFamily="3" start="1" optimizeMode="0" nominalUnitType="0" Version="1.3" step="1" sweepMode="1" type="3" startUnitType="0" nominal="9.6" stopUnitType="0" statMode="0" enabled="1" stop="10" statistical="0" stepUnitType="0" statValue="10" sweep="0">
+    <roles>
+     <role value="2" key="0"/>
+     <role value="Alumina" key="2"/>
+    </roles>
+   </Variable>
+   <Variable statValueUnitType="-1" isAbsOfNegativeValue="0" name="Alumina__Er__TanD" points="10" unitFamily="3" start="1" optimizeMode="0" nominalUnitType="0" Version="1.3" step="1" sweepMode="1" type="3" startUnitType="0" nominal="0" stopUnitType="0" statMode="0" enabled="1" stop="10" statistical="0" stepUnitType="0" statValue="10" sweep="0">
+    <roles>
+     <role value="4" key="0"/>
+     <role value="Alumina" key="2"/>
+    </roles>
+   </Variable>
+  </Variables>
+ </CommonData>
+ <ComponentData Type="OaMultilayer" CurrentSubGroup="0">
+  <SubstrateData Type="OaSubstrate">
+   <LibSubstrate name="task2_lib:substrate1"/>
+  </SubstrateData>
+  <PhysicalData Version="1.4" Type="LineType">
+   <CrossSection TopPlane="" BottomPlane="" LineType="1">
+    <Lines>
+     <Line spaceType="1" width="Width" space="Space" layer="silkscreenTop"/>
+     <Line spaceType="1" width="Width" space="Space" layer="silkscreenTop"/>
+    </Lines>
+    <Clearances/>
+   </CrossSection>
+  </PhysicalData>
+ </ComponentData>
+</cild>

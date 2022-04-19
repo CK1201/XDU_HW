@@ -1,0 +1,141 @@
+Microsoft (R) Macro Assembler Version 6.11		    11/16/20 20:55:37
+tempfile.asm						     Page 1 - 1
+
+
+ 0000				DATAS SEGMENT
+ 0000 01 02 03 04 05 06			ARRAY DB 1,2,3,4,5,6,7,8,9,-10,11,-12,13,14,15,16,17,18,19,20
+       07 08 09 F6 0B F4
+       0D 0E 0F 10 11 12
+       13 14
+ 0014  0014 [				ARRAYP DB 20 DUP(?)
+        00
+       ]
+ 0028  0014 [				ARRAYN DB 20 DUP(?)
+        00
+       ]
+				    ;此处输入数据段代码  
+ 003C				DATAS ENDS
+
+ 0000				STACKS SEGMENT
+				    ;此处输入堆栈段代码
+ 0000				STACKS ENDS
+
+ 0000				CODES SEGMENT
+				    ASSUME CS:CODES,DS:DATAS,SS:STACKS
+				    
+ 0000				DISPALD PROC NEAR
+ 0000  50				PUSH AX
+ 0001  51				PUSH CX
+ 0002  52				PUSH DX
+ 0003  32 E4				XOR AH,AH
+ 0005  B1 64				MOV CL,100
+ 0007  F6 F1				DIV CL
+ 0009  50				PUSH AX
+ 000A  B2 30				MOV DL,30H
+ 000C  02 D0				ADD DL,AL
+ 000E  B4 02				MOV AH,2
+					;INT 21H
+					
+ 0010  58				POP AX
+ 0011  8A C4				MOV AL,AH
+ 0013  32 E4				XOR AH,AH
+ 0015  B1 0A				MOV CL,10
+ 0017  F6 F1				DIV CL
+ 0019  50				PUSH AX
+ 001A  B2 30				MOV DL,30H
+ 001C  02 D0				ADD DL,AL
+ 001E  B4 02				MOV AH,2
+ 0020  CD 21				INT 21H
+					
+ 0022  58				POP AX
+ 0023  B2 30				MOV DL,30H
+ 0025  02 D4				ADD DL,AH
+ 0027  B4 02				MOV AH,2
+ 0029  CD 21				INT 21H
+ 002B  5A				POP DX
+ 002C  59				POP CX
+ 002D  58				POP AX
+ 002E  C3				RET
+ 002F				DISPALD ENDP
+
+
+ 002F				START:
+ 002F  B8 ---- R		    MOV AX,DATAS
+ 0032  8E D8			    MOV DS,AX
+				    
+ 0034  B9 0014			    MOV CX,20
+ 0037  33 D2			    XOR DX,DX
+ 0039  8D 36 0000 R		    LEA SI,ARRAY
+ 003D  8D 3E 0014 R		    LEA DI,ARRAYP
+ 0041  8D 1E 0028 R		    LEA BX,ARRAYN
+				    
+ 0045				L1:
+ 0045  8A 04				MOV AL,[SI]
+ 0047  22 C0				AND AL,AL
+ 0049  78 07				JS L2
+ 004B  88 05				MOV [DI],AL
+ 004D  47				INC DI
+ 004E  FE C2				INC DL
+ 0050  EB 05				JMP L3
+					
+ 0052				L2:
+ 0052  88 07				MOV [BX],AL
+ 0054  43				INC BX
+ 0055  FE C6				INC DH
+					
+ 0057				L3:
+ 0057  46				INC SI
+ 0058  E2 EB				LOOP L1
+ 005A  8A C2				MOV AL,DL
+ 005C  E8 FFA1				CALL DISPALD
+					
+ 005F  B2 0A				MOV DL,10
+ 0061  B4 02				MOV AH,2
+ 0063  CD 21				INT 21H
+					
+					
+ 0065  8A C6				MOV AL,DH
+ 0067  E8 FF96				CALL DISPALD
+				    
+				    ;此处输入代码段代码
+ 006A  B4 4C			    MOV AH,4CH
+ 006C  CD 21			    INT 21H
+ 006E				CODES ENDS
+				    END START
+
+Microsoft (R) Macro Assembler Version 6.11		    11/16/20 20:55:37
+tempfile.asm						     Symbols 2 - 1
+
+
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+CODES  . . . . . . . . . . . . .	16 Bit	 006E	  Para	  Private 
+DATAS  . . . . . . . . . . . . .	16 Bit	 003C	  Para	  Private 
+STACKS . . . . . . . . . . . . .	16 Bit	 0000	  Para	  Private 
+
+
+Procedures,  parameters and locals:
+
+                N a m e                 Type     Value    Attr
+
+DISPALD  . . . . . . . . . . . .	P Near	 0000	  CODES	Length= 002F Public
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+ARRAYN . . . . . . . . . . . . .	Byte	 0028	  DATAS	
+ARRAYP . . . . . . . . . . . . .	Byte	 0014	  DATAS	
+ARRAY  . . . . . . . . . . . . .	Byte	 0000	  DATAS	
+L1 . . . . . . . . . . . . . . .	L Near	 0045	  CODES	
+L2 . . . . . . . . . . . . . . .	L Near	 0052	  CODES	
+L3 . . . . . . . . . . . . . . .	L Near	 0057	  CODES	
+START  . . . . . . . . . . . . .	L Near	 002F	  CODES	
+
+	   0 Warnings
+	   0 Errors
